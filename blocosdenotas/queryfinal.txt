@@ -1,0 +1,22 @@
+ALTER TABLE afinal.professor AUTO_INCREMENT = 1;
+INSERT INTO `afinal`.`professor` (`email`, `nome`, `senha`, `areaDoConhecimento`, `responsavel`, `cpf`) VALUES ('123', '123', '123', '123', '1', '123');
+INSERT INTO `afinal`.`professor` (`email`, `nome`, `senha`, `areaDoConhecimento`, `responsavel`, `cpf`) VALUES ('321', '321', '321', '321', '1', '123');
+
+ALTER TABLE afinal.tipoderecursos AUTO_INCREMENT = 1; 
+INSERT INTO `afinal`.`tipoderecursos` (`descricao`, `nome`, `quantidade`, `idProfessor`) VALUES ('adsdasda', 'Sala', '20', '1');
+INSERT INTO `afinal`.`tipoderecursos` (`descricao`, `nome`, `quantidade`, `idProfessor`) VALUES ('asddasd', 'Laboratorio', '20', '1');
+INSERT INTO `afinal`.`tipoderecursos` (`descricao`, `nome`, `quantidade`, `idProfessor`) VALUES ('adsasdasd', 'Ginasio', '1', '1');
+INSERT INTO `afinal`.`tipoderecursos` (`descricao`, `nome`, `quantidade`, `idProfessor`) VALUES ('dasdas', 'Auditorio', '2', '2');
+INSERT INTO `afinal`.`tipoderecursos` (`descricao`, `nome`, `quantidade`, `idProfessor`) VALUES ('asddasasd', 'Automoveis', '2', '2');
+
+ALTER TABLE afinal.recursos AUTO_INCREMENT = 1
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('303', '40', 'asd', '1');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('305', '40', 'asd', '1');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('307', '40', 'asd', '1');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('311', '40', 'asd', '1');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('314', '40', 'asd', '1');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('609', '20', 'dsa', '2');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('611', '20', 'dsa', '2');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('606', '20', 'dsa', '2');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('607', '20', 'dsa', '2');
+INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('610', '20', 'dsa', '2');

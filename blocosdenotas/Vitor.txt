@@ -1,0 +1,57 @@
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('00:00:00', '01:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('01:00:00', '02:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('02:00:00', '03:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('03:00:00', '04:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('04:00:00', '05:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('05:00:00', '06:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('06:00:00', '07:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('07:00:00', '08:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('08:00:00', '09:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('09:00:00', '10:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('10:00:00', '11:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('11:00:00', '12:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('12:00:00', '13:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('13:00:00', '14:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('14:00:00', '15:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('15:00:00', '16:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('16:00:00', '17:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('17:00:00', '18:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('18:00:00', '19:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('19:00:00', '20:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('20:00:00', '21:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('21:00:00', '22:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('22:00:00', '23:00:00');
+INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('23:00:00', '00:00:00');
+
+
+
+
+
+ INNER JOIN bancofinal.recursos ON bancofinal.recursos.idRecursos = bancofinal.horariorecursos.idRecursos
+
+
+SELECT afinal.horario.* ,  afinal.datarecursos.* ,afinal.data.* , afinal.recursos.*  FROM afinal.horario INNER JOIN afinal.datarecursos ON afinal.datarecursos.iddata = afinal.horario.iddata and afinal.datarecursos.idRecursos = afinal.horario.idRecursos  INNER JOIN afinal.recursos ON afinal.recursos.idRecursos = afinal.datarecursos.idRecursos  INNER JOIN afinal.data ON afinal.data.iddata WHERE afinal.recursos.idTipoDeRecursos = 1 and afinal.data.iddata = (SELECT afinal.data.iddata from afinal.data where afinal.data.data = '2020/02/14') ;
+
+
+
+
+
+
+
+
+07:00-07:50
+07:50-08:40
+08:55-09:45
+09:45-10:35
+10:50-11:40
+11:40-12:30
+12:30-13:50
+13:50-14:40
+14:40-15:30
+15:50-16:40
+16:40-17:30
+17:30-19:00
+19:00-19:50
+19:50-20:40
+20:55-21:45
+21:45-22:35

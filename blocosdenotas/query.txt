@@ -1,0 +1,42 @@
+mysql -u root -p
+MySQL80
+
+INSERT INTO mydb.professor (email, nome, senha, areaDoConhecimento, responsavel) VALUES ('vitor231408@gmail.com', 'Vitor Martins Soares', '@Aa11121314', 'Matematica', '1');
+INSERT INTO mydb.horario (horarioInicio, horarioFim) VALUES ('2019-09-18 12:43:30', '2019-09-18 14:43:30');
+INSERT INTO mydb.tipoderecursos (descricao, nome, quantidade) VALUES ('laboratorios para experiencia do aluno', 'Laboratorio', '20');
+INSERT INTO mydb.recursos (numero, capacidade, informacao, TipoDeRecursos_idTipoDeRecursos, Professor_idProfessor) VALUES ('303', '50', '1', '1', '1');
+INSERT INTO mydb.recursos_has_horario (Recursos_idRecursos, Horario_idHorario, ocupacao) VALUES ('1', '1', 'true');
+INSERT INTO mydb.professor_has_recursos_has_horario (Professor_idProfessor, Recursos_has_Horario_Recursos_idRecursos, Recursos_has_Horario_Horario_idHorario, status) VALUES ('1', '1', '1', 'ocupado');
+
+
+
+UPDATE mydb.professor SET email = 'vitormartinssoare@live.com', nome = 'Lucas Martins', senha = '123',   = 'a', responsavel = '0' WHERE (idProfessor = '1');
+UPDATE mydb.horario SET horarioInicio = '2019-09-18 14:43:30', horarioFim = '2019-09-18 12:43:30' WHERE (idHorario = '1');
+UPDATE mydb.tipoderecursos SET descricao = 'salario', nome = 'sala', quantidade = '40' WHERE (idTipoDeRecursos = '1');
+UPDATE mydb.recursos SET numero = '0', capacidade = '0', informacao = '0', TipoDeRecursos_idTipoDeRecursos = '0', Professor_idProfessor = '0' WHERE (idRecursos = '1');
+UPDATE mydb.recursos_has_horario SET Recursos_idRecursos = '1', Horario_idHorario = '1', ocupacao = 'false' WHERE (Recursos_idRecursos = '1') and (Horario_idHorario = '1');
+UPDATE mydb.professor_has_recursos_has_horario SET status = 'liberado' WHERE (Professor_idProfessor = '1') and (Recursos_has_Horario_Recursos_idRecursos = '1') and (Recursos_has_Horario_Horario_idHorario = '1');
+
+
+
+DELETE FROM mydb.professor_has_recursos_has_horario WHERE (Professor_idProfessor = '1') and (Recursos_has_Horario_Recursos_idRecursos = '1') and (Recursos_has_Horario_Horario_idHorario = '1');
+ALTER TABLE mydb.professor_has_recursos_has_horario AUTO_INCREMENT = 1;
+DELETE FROM mydb.recursos_has_horario WHERE (Recursos_idRecursos = '1') and (Horario_idHorario = '1');
+ALTER TABLE mydb.recursos_has_horario AUTO_INCREMENT = 1;
+DELETE FROM mydb.recursos WHERE (idRecursos = '1');
+ALTER TABLE mydb.recursos AUTO_INCREMENT = 1;
+DELETE FROM mydb.professor WHERE (idProfessor = '1');
+ALTER TABLE mydb.professor AUTO_INCREMENT = 1;
+DELETE FROM mydb.horario WHERE (idHorario = '1');
+ALTER TABLE mydb.horario AUTO_INCREMENT = 1;
+DELETE FROM mydb.tipoderecursos WHERE (idTipoDeRecursos = '1');
+ALTER TABLE mydb.tipoderecursos AUTO_INCREMENT = 1;
+
+
+
+SELECT * FROM mydb.professor;
+SELECT * FROM mydb.horario;
+SELECT * FROM mydb.tipoderecursos;
+SELECT * FROM mydb.recursos;
+SELECT * FROM mydb.recursos_has_horario;
+SELECT * FROM mydb.professor_has_recursos_has_horario;
