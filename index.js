@@ -32,10 +32,27 @@ let objVazio = [[0]];
 let selectData = require("./src/selectData");
 let selectHorarioDataRecursos = require("./src/selectHorarioDataRecursos");
 let selectTipoRecursos = require("./src/selectTipoRecursos");
-let insertProfessorHorario = require("./src/insertProfessorHorario");
 let selectProfessorHorario = require("./src/selectProfessorHorario");
-let updateAprovadoProfessorHorario = require("./src/updateAprovadoProfessorHorario");
-let updateRecusadoProfessorHorario = require("./src/updateRecusadoProfessorHorario");
+//let selectProfessorHorarioEspec = require("./src/selectProfessorHorarioEspec");
+let selectProfessor = require("./src/selectProfessor");
+let insertProfessorHorario = require("./src/insertProfessorHorario");
+let updateAprovadoProfessorHorario = require("./src/updateRecusadoProfessorHorario");
+let validacao = require("./auth");
+let token = require("./validadeToken");
+
+router.post('/login',(req,res)=>{
+    //usuario = req.body.usuario.substring(0,100);
+    //senha = req.body.senha.substring(0,100);
+    //console.log("validando a conexão");
+    if(!req.body.email || !req.body.password){
+        res.status(400).send('Informe usuário e senha!');
+    }else{
+       selectProfessor(validacao,req,res);
+    }
+})
+router.post('/validateToken', (req,res)=>{
+    
+})
 
 router.post('/data', (req, res) =>{
     objData[0][0] = req.body.data.substring(0,100)
@@ -65,11 +82,6 @@ router.post('/insertProfessorHorario',(req,res) =>{
 router.get('/selectProfessorHorario',(req,res)=>{
     console.log("Mostrando os professores e os horarios em pedidos")
     selectProfessorHorario(objVazio,res);
-})
-router.get('/login',(req,res)=>{
-    usuario = req.body.usuario.substring(0,100);
-    senha = req.body.senha.substring(0,100);
-    console.log("validando a conexão");
 })
 router.post('/updateAprovadoProfessorHorario',(req,res) =>{
     professor = req.body.professor.substring(0,100);
