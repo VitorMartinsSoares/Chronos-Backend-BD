@@ -11,8 +11,8 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao){
             console.log(error)
         else
             console.log(results)
-        connection.end();
         funcao(results,values);
+        connection.end();
     });
 }
 module.exports = sqlQUERY;

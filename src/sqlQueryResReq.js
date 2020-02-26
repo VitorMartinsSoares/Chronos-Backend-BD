@@ -11,9 +11,9 @@ let sqlQUERY = function execSQLQuery(sqlQry,funcao,req,res){
             console.log(error);
         else
             console.log(results);
-        connection.end();
         funcao(results,req,res);
         console.log('Teste de validação!');
+        connection.end();
     });
 }
 module.exports = sqlQUERY;

@@ -11,10 +11,10 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
             res.json(error);
         else
             res.json(results);
-        connection.end();
         console.log('executou!');
         funcao(results);
         console.log("Mostrando os professores e os horarios em pedidos")
+        connection.end();
     });
 }
 module.exports = sqlQUERY;

@@ -1,4 +1,3 @@
-const {authSecret} = require('./.env');
 const jwt = require('jwt-simple');
 const bcrypt = require('bcrypt-nodejs');
 
@@ -15,6 +14,5 @@ const validateToken = function (req,res){
         // problema com o tokens
     }
     res.send(false)
-    return{signin,validateToken}
 }
 module.exports = validateToken;

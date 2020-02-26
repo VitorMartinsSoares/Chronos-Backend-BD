@@ -23,8 +23,8 @@ let sqlQUERY = function execSQLQuery(sqlQry,sqlQry2,valor,funcao){
             console.log(results2)
         console.log("SELECT")
         resul2 = results2;
+        funcao(valor,resul2);
         connection.end();
-        funcao(valor,resul2)
     });
 }
 module.exports = sqlQUERY;

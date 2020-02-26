@@ -8,6 +8,7 @@ let resulta = function erroNaoExiste(results, valor){
         insertData(valor[0]);
     }else{
         console.log("Data Ja Cadastrada")
+        console.log(results)
     }
 }
 //criando modulo
