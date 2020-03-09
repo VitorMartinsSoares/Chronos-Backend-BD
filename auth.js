@@ -7,7 +7,7 @@ const secret = "meu-segredo"
 const signin = function (objeto,req,res){
     console.log(objeto[0]);
     if(!objeto[0]) return  res.status(400).send('Usuário não Encontrado!');
-    //const isMatch = bcrypt.compareSync(req.body.password, user.password);
+    //const isMatch = bcrypt.compareSync(req.query.password, user.password);
     const isMatch = (req.body.password == objeto[0].senha);
     if(!isMatch) return res.status(401).send('Email/Senha Inválidas!');
     const payload = {
@@ -27,7 +27,7 @@ const signin = function (objeto,req,res){
         expiresIn: 300, // 5min 
         algorithm:  "RS256" //SHA-256 hash signature
     }); 
-    return res.status(200).send({ auth: true, token: token,payload: payload}); 
+    res.status(200).send({ auth: true, token: token,payload: payload}); 
 }
 
 module.exports = signin;
