@@ -70,10 +70,9 @@ router.post('/login',(req,res)=>{
 
 //Puxando Data Especifica, caso não exista, adicionar no banco de dados
 router.post('/data',(req, res) =>{
-    objData[0][0] = req.query.data.substring(0,100)
+    objData[0][0] = req.body.data;
     console.log("Caso não tenha a data "+ objData[0][0]+" Inserir no banco de dados");
     selectData(objData,res);
-    res.json();
 });
 
 

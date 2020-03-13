@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao){
+let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res=0){
     const connection = mysql.createConnection({
         host     : 'localhost',
         port     : 3306,
@@ -11,7 +11,11 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao){
             console.log(error)
         else
             console.log(results)
-        funcao(results,values);
+        if(res==0){
+            funcao(results,values);
+        }else{  
+            funcao(results,values,res);
+        }
         connection.end();
     });
 }

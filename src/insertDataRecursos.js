@@ -2,7 +2,7 @@ let sqlQUERY = require("./sqlQuerySemRes");
 let funcao = require("./imprimirResults")
 let objVazio;
 //adicionando tipo de recursos ao banco
-let selectDR = function select(results1, results2){
+let selectDR = function select(results1, results2,res){
     objVazio = results1;
     results2.forEach(function(name){
         let query1 = "INSERT INTO afinal.datarecursos(iddata, idRecursos) VALUES ((SELECT iddata FROM afinal.data where afinal.data.data = '"+objVazio+"'), '"+name.idRecursos+"');";
@@ -14,6 +14,7 @@ let selectDR = function select(results1, results2){
         let query = query2;
         sqlQUERY(query,objVazio,funcao);
     });
+    res.status(200).send("CERTO");
 }
 //criando modulo
 module.exports = selectDR;

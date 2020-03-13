@@ -9,7 +9,7 @@ const signin = function (objeto,req,res){
     if(!objeto[0]) return  res.status(400).send('Usuário não Encontrado!');
     //const isMatch = bcrypt.compareSync(req.query.password, user.password);
     const isMatch = (req.body.password == objeto[0].senha);
-    if(!isMatch) return res.status(401).send('Email/Senha Inválidas!');
+    if(!isMatch) return res.status(400).send('Email/Senha Inválidas!');
     const payload = {
         id: objeto[0].idProfessor,
         email: objeto[0].email,

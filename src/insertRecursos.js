@@ -7,6 +7,7 @@ let selectD = function select(objVazio){
     let obj = [[0]];
     let query = `INSERT INTO afinal.recursos (numero, idTipoDeRecursos) VALUES ('${objVazio.recursos}', 
     (SELECT idTipoDeRecursos FROM afinal.tipoderecursos where tipoderecursos.nome ='${objVazio.tipoRecurso}'));`;
+
     let queryCont = 'SELECT * FROM afinal.data;'
     sqlQUERY(queryInserir,queryCont,objVazio,funcao);
 }
