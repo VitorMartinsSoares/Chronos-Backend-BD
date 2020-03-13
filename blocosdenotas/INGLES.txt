@@ -17,3 +17,10 @@ INNER JOIN bancoteste.recursos ON bancoteste.recursos.idRecursos = bancoteste.da
   INNER JOIN bancoteste.horario ON bancoteste.horario.idhorario = bancoteste.datarecursos.idhorario          
   INNER JOIN bancoteste.data ON bancoteste.data.iddata = bancoteste.datarecursos.iddata   
   WHERE bancoteste.recursos.idTipoDeRecursos = 1 and bancoteste.data.iddata = (SELECT bancoteste.data.iddata from bancoteste.data where bancoteste.data.data = '2020/02/12') ;
+
+
+DELETE FROM `afinal`.`professorhorario` WHERE 
+(`idhorario` = (SELECT idhorario FROM afinal.horario 
+        where iddata=(SELECT iddata FROM afinal.data where data = '2020-02-16') 
+        and idRecursos=(SELECT idRecursos FROM afinal.recursos where numero = '611')))
+ and (`horario` = '07:50:00') and (`idProfessor` = '2');

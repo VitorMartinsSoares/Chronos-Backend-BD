@@ -33,6 +33,7 @@ let objHorarioProf;
 let objVazio = [[0]];
 let objTipo;
 let objProfessor;
+let dHPE;
 
 
 
@@ -44,8 +45,12 @@ let selectProfessorHorario = require("./src/selectProfessorHorario");
 let selectProfessorHorarioEspec = require("./src/selectProfessorHorarioEspec");
 let selectProfessor = require("./src/selectProfessor");
 let insertProfessorHorario = require("./src/insertProfessorHorario");
-let inserirTipoDeRecursos = require("./src/insertTipoDeRecursos")
-let updateAprovadoProfessorHorario = require("./src/updateRecusadoProfessorHorario");
+let inserirTipoDeRecursos = require("./src/insertTipoDeRecursos");
+let inserirRecursos = require("./src/insertRecursos");
+let updateAprovadoProfessorHorario = require("./src/updateAprovadoProfessorHorario");
+let updateRecusadoProfessorHorario = require("./src/updateRecusadoProfessorHorario");
+let updateTipoDeRecursos = require("./src/updateTipoDeRecursos");
+let deleteProfessorHorarioEspec = require("./src/deleteProfessorHorarioEspec");
 let validacao = require("./auth");
 let cadastroDeProfessor = require("./src/updateProfessor");
 
@@ -104,7 +109,7 @@ router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
 
 
 //Verificar Pedidos de Horarios Para Seleção
-router.get('/selectProfessorHorario',verifyADMRecursos,(req,res)=>{
+router.post('/selectProfessorHorario',verifyADMRecursos,(req,res)=>{
     console.log("Mostrando os professores e os horarios em pedidos");
     selectProfessorHorario(objVazio,res);
 });
@@ -112,22 +117,27 @@ router.get('/selectProfessorHorario',verifyADMRecursos,(req,res)=>{
 
 
 //Recurso para algum professor Identificar seus pedidos de horario
-router.get('/selectProfessorHorarioEspec',verifyJWT,(req,res)=>{
-    //professor = req.body.professor.substring(0,100);
-    professor = 'vitor@'
+router.post('/selectProfessorHorarioEspec',verifyJWT,(req,res)=>{
+    professor = req.body.payload;
+    console.log(professor);
     console.log("Mostrando os professores e os horarios em pedidos ESPECIFICO");
-    selectProfessorHorarioEspec(professor,res);
+    selectProfessorHorarioEspec(professor.email,res);
 });
 
 
 
 //Professor ADM de recursos aprovar uma requisição de horario
 router.post('/updateAprovadoProfessorHorario',verifyADMRecursos,(req,res) =>{
-    professor = req.query.professor.substring(0,100);
-    idHorario = req.query.idhorario.substring(0,100);
-    horario = req.query.horario.substring(0,100);
-    objHorarioProf = [[professor,idHorario,horario]];
+    objVazio = req.body.item;
+    console.log(objVazio);
+    objHorarioProf = {
+        professor: objVazio.email,
+        sala: objVazio.numero,
+        data: objVazio.data.slice(0,10),
+        horario: objVazio.horario
+    }
     console.log("Aprovando determinado horario para determinado professor");
+    console.log(objHorarioProf)
     updateAprovadoProfessorHorario(objHorarioProf,res);
 });
 
@@ -135,11 +145,16 @@ router.post('/updateAprovadoProfessorHorario',verifyADMRecursos,(req,res) =>{
 
 //Professor ADM de recursos recusar uma requisição de horario
 router.post('/updateRecusadoProfessorHorario',verifyADMRecursos,(req,res) =>{
-    professor = req.query.professor.substring(0,100);
-    idHorario = req.query.idhorario.substring(0,100);
-    horario = req.query.horario.substring(0,100);
-    objHorarioProf = [[professor,idHorario,horario]];
-    console.log("Aprovando determinado horario para determinado professor");
+    objVazio = req.body.item;
+    console.log(objVazio);
+    objHorarioProf = {
+        professor: objVazio.email,
+        sala: objVazio.numero,
+        data: objVazio.data.slice(0,10),
+        horario: objVazio.horario
+    }
+    console.log("Recusando determinado horario para determinado professor");
+    console.log(objHorarioProf)
     updateRecusadoProfessorHorario(objHorarioProf,res);
 });
 
@@ -178,45 +193,64 @@ router.post('/cadastroDeProfessor',(req,res) =>{
 
 
 //cadastro de tipo de recursos
-router.post('/inserirTipoDeRecursos',verifyADMRecursos,(req,res) =>{
-    if(!req.query.descricao) return res.status(401).send('Informe o Email!');
-    if(!req.query.nomeTipo) return res.status(401).send('Confirme o Email!');
-    if(!req.query.quantidade) return res.status(401).send('Informe o seu Nome!');
-    if(!req.query.emailProfessor) return res.status(401).send('Informe a senha!');
-    let descricao = req.query.descricao.substring(0,100);
-    let nomeTipo = req.query.nomeTipo.substring(0,100);
-    let quantidade = req.query.quantidade.substring(0,100);
-    let emailProfessor = req.query.emailProfessor.substring(0,100);
+router.post('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
+    if(!req.body.recType) return res.status(401).send('Confirme o nome do tipo!');
+    let nomeTipo = req.body.recType;
+    let rec = req.body.payload;
     console.log("Inserindo Tipo de recursos");
     objTipo = {
-        descricao: descricao,
-        nomeTipo: nomeTipo,
-        quantidade: quantidade,
-        emailProfessor: emailProfessor
+        nomeTipo: nomeTipo.nome,
+        emailProfessor: 'vitor@'
     }
+    console.log(objTipo);
     inserirTipoDeRecursos(objTipo,res);
 });
 
 
 
+router.put('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
+    if(!req.body.recType) return res.status(401).send('Confirme o nome do tipo!');
+    let nomeTipo = req.body.recType;
+    let rec = req.body.payload;
+    console.log("Inserindo Tipo de recursos");
+    objTipo = {
+        nomeTipo: nomeTipo.nome,
+        emailProfessor: 'vitor@'
+    }
+    console.log(objTipo);
+    updateTipoDeRecursos(objTipo,res);
+});
+
+
+
 //cadastro de tipo de recursos
-router.post('/inserirRecursos',verifyADMRecursos,(req,res) =>{
-    if(!req.query.descricao) return res.status(401).send('Informe o Email!');
-    if(!req.query.nomeTipo) return res.status(401).send('Confirme o Email!');
-    if(!req.query.quantidade) return res.status(401).send('Informe o seu Nome!');
-    if(!req.query.emailProfessor) return res.status(401).send('Informe a senha!');
-    let descricao = req.query.descricao.substring(0,100);
-    let nomeTipo = req.query.nomeTipo.substring(0,100);
-    let quantidade = req.query.quantidade.substring(0,100);
-    let emailProfessor = req.query.emailProfessor.substring(0,100);
+router.post('/insertRecursos',verifyADMRecursos,(req,res) =>{
+    if(!req.body.recursos) return res.status(401).send('Informe o Email!');
+    if(!req.body.tipoRecurso) return res.status(401).send('Confirme o Email!');
+    let recursos = req.query.recursos.substring(0,100);
+    let tipoRecurso = req.query.tipoRecurso.substring(0,100);
     console.log("Inserindo Recursos");
     objTipo = {
-        descricao: descricao,
-        nomeTipo: nomeTipo,
-        quantidade: quantidade,
-        emailProfessor: emailProfessor
+        recursos: recursos,
+        tipoRecurso: tipoRecurso
     }
-    inserirRecursos(objTipo,res);
+    console.log(objTipo);
+    //inserirRecursos(objTipo,res);
+});
+
+
+
+//cancelar reserva
+router.post('/deleteProfessorHorarioEspec',verifyJWT,(req,res) =>{
+    let item = req.body.item;
+    dHPE = {
+        data : item.data.slice(0,10),
+        recursos: item.numero,
+        professor: item.email,
+        horario: item.horario 
+    }
+    console.log("Deletando horario do professor especifico");
+    deleteProfessorHorarioEspec(dHPE,res);
 });
 
 
@@ -226,8 +260,6 @@ app.post('/logout',verifyJWT, function(req, res) {
     console.log("Fez logout e cancelou o token!");
     res.status(200).send({ auth: false, token: null }); 
 });
-
-
 
 //função que verifica se o JWT é validado atravez do token
 function verifyJWT(req, res, next){
@@ -245,11 +277,11 @@ function verifyJWT(req, res, next){
 
 
 //função que verifica se o JWT é validado atravez do token e se é adm De Recursos
-function verifyADMGeral(req, res, next){ 
-    var token = req.headers['x-access-token']; 
+function verifyADMRecursos(req, res, next){ 
+    var token = req.headers['x-access-token'];
     if (!token) 
         return res.status(401).send({ auth: false, message: 'Token não informado.' }); 
-    if(!(req.query.adm == 'true')) return res.status(401).send({ auth: false, message: 'Apenas Administradores possuem acessos' }); 
+    if(!(req.body.payload.admRecursos == true)) return res.status(401).send({ auth: false, message: 'Apenas Administradores possuem acessos' }); 
     var publicKey  = fs.readFileSync('./public.key', 'utf8');
     jwt.verify(token, publicKey, {algorithm: ["RS256"]}, function(err, decoded) { 
         if (err) 
@@ -261,7 +293,7 @@ function verifyADMGeral(req, res, next){
 
 
 //função que verifica se o JWT é validado atravez do token mais validação de ADM Geral e de Recursos
-function verifyADMRecursos(req, res, next){ 
+function verifyADMGeral(req, res, next){ 
     var token = req.headers['x-access-token']; 
     if (!token) return res.status(401).send({ auth: false, message: 'Token não informado.' }); 
     if(!(req.query.admGeral == 'true')) return res.status(401).send({ auth: false, message: 'Apenas Administradores possuem acessos' }); 

@@ -3,7 +3,7 @@ let funcao = require("./imprimirResults")
 //adicionando tipo de recursos ao banco
 let inserirTP = function select(objVazio, res){
     let obj = [[0]];
-    let query = `INSERT INTO afinal.tipoderecursos (nome, idProfessor) VALUES ('${objVazio.nomeTipo}', (select idProfessor from afinal.professor where email = '${objVazio.emailProfessor}'));`;
+    let query = `UPDATE afinal.tipoderecursos SET nome = '${objVazio.nome}' WHERE (idTipoDeRecursos = '${objVazio.id}');`;
     sqlQUERY(query,obj,funcao,res);
 }
 //criando modulo

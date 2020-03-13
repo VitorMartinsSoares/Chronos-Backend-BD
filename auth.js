@@ -13,10 +13,8 @@ const signin = function (objeto,req,res){
     const payload = {
         id: objeto[0].idProfessor,
         email: objeto[0].email,
-        nome: objeto[0].nome,
-        senha: objeto[0].senha,
+        nome: objeto[0].nomeP,
         areaDoConhecimento: objeto[0].areaDoConhecimento,
-        responsavel: objeto[0].responsavel,
         cpf: objeto[0].cpf,
         admGeral: objeto[0].admGeral,
         admRecursos: objeto[0].admRecursos
