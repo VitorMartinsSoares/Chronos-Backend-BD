@@ -1,4 +1,3 @@
-const mysql = require('mysql');
 let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
     const connection = mysql.createConnection({
         host     : 'localhost',
@@ -8,7 +7,7 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
     });
     connection.query(sqlQry,[values],function(error, results, fields){
         if(error) 
-            res.json(error);
+            res.status(400).send('Professor responsavel! Não é possivel Deletar!');
         else
             res.json(results);
         funcao(results);
@@ -16,4 +15,13 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
         connection.end();
     });
 }
-module.exports = sqlQUERY;
+let funcao = require("./imprimirResults");
+const mysql = require('mysql');
+//adicionando tipo de recursos ao banco
+let selectP = function select(email,req,res){
+    let obj = [[0]];
+    let query = `DELETE FROM afinal.professor WHERE (email = '${email}');`;
+    sqlQUERY(query,obj,funcao,res);
+}
+//criando modulo
+module.exports = selectP;
