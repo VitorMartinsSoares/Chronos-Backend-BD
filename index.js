@@ -50,13 +50,16 @@ let selectTabelaTipoDeRecursos =  require("./src/selectTabelaTipoDeRecursos");
 let insertProfessorHorario = require("./src/insertProfessorHorario");
 let inserirTipoDeRecursos = require("./src/insertTipoDeRecursos");
 let inserirRecursos = require("./src/insertRecursos");
+let insertProfessor = require("./src/insertProfessor");
 let updateAprovadoProfessorHorario = require("./src/updateAprovadoProfessorHorario");
 let updateRecusadoProfessorHorario = require("./src/updateRecusadoProfessorHorario");
 let updateTipoDeRecursos = require("./src/updateTipoDeRecursos");
+let updateProfessor = require("./src/updateProfessor");
 let deleteProfessorHorarioEspec = require("./src/deleteProfessorHorarioEspec");
 let deleteProfessor = require("./src/deleteProfessor");
+let deleteTipoDeRecursos = require("./src/deleteTipoDeRecursos");
+let deleteRecursos = require("./src/deleteRecursos");
 let validacao = require("./auth");
-let cadastroDeProfessor = require("./src/updateProfessor");
 
 
 
@@ -110,13 +113,28 @@ router.get('/tipoDeRecursos', (req, res) =>{
 
 
 
+router.delete('/deleteTipoDeRecursos',(req,res) =>{
+    if(!req.body.nomeTipo) return res.status(401).send('Informe o nome do Tipo!!');
+    console.log("Deleta tipo de recursos");
+    deleteTipoDeRecursos(req.body.nomeTipo,req,res);
+});
+
+
+
 //inserir Um Pedido de Horario Pra uma Determinada Pessoa 
 router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
-    professor = req.query.professor.substring(0,100);
-    idHorario = req.query.idhorario.substring(0,100);
-    horario = req.query.horario.substring(0,100);
-    objHorarioProf = [[professor,idHorario,horario]];
-    insertProfessorHorario(objHorarioProf,res);
+    professor = req.body.payload;
+    data = req.body.data;
+    recurso = req.body.recurso;
+    motivo = req.body.texto;
+    horario = req.body.horario;
+    objHorarioProf = {
+        professor: professor.id,
+        data: data,
+        recurso: recurso,
+        motivo: motivo
+    };
+    insertProfessorHorario(objHorarioProf,horario,res);
 });
 
 
@@ -176,32 +194,41 @@ router.post('/updateRecusadoProfessorHorario',verifyADMRecursos,(req,res) =>{
 
 //Cadastro de Professor
 router.post('/cadastroDeProfessor',(req,res) =>{
-    const salt = 10;
+    if(!req.body.emailProfessor) return res.status(401).send('Informe o Email!');
+    if(!req.body.emailConfirma) return res.status(401).send('Confirme o Email!');
+    if(!req.body.nomeProfessor) return res.status(401).send('Informe o seu Nome!');
+    if(!req.body.senhaProfessor) return res.status(401).send('Informe a senha!');
+    if(!req.body.senhaConfirma) return res.status(401).send('Informe a senha!');
+    if(!req.body.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
+    if(!req.body.cpfProfessor) return res.status(401).send('Informe o cpf do Professor!');
+    if(req.body.emailProfessor!=req.body.emailConfirma) return res.status(401).send('Confirma o Email, Emails não batem!');
+    if(req.body.senhaProfessor!=req.body.senhaConfirma) return res.status(401).send('Confirma a Senha, Senhas não batem!');
+
+    objProfessor = {
+        email: req.body.emailProfessor,
+        nome: req.body.nomeProfessor,
+        senha: req.body.senhaProfessor,
+        area: req.body.areaDoConhecimento,
+        cpf: req.body.cpfProfessor
+    }
+    insertProfessor(objProfessor,req,res);
+});
+
+router.put('/cadastroDeProfessor',(req,res) =>{
     if(!req.query.emailProfessor) return res.status(401).send('Informe o Email!');
-    if(!req.query.emailConfirma) return res.status(401).send('Confirme o Email!');
     if(!req.query.nomeProfessor) return res.status(401).send('Informe o seu Nome!');
-    if(!req.query.senhaProfessor) return res.status(401).send('Informe a senha!');
     if(!req.query.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
     if(!req.query.cpfProfessor) return res.status(401).send('Informe o cpf do Professor!');
-    if(req.query.emailProfessor!=req.query.emailConfirma) return res.status(401).send('Confirma o Email, Emails nao batem!');
-
-    let emailP = req.query.emailProfessor.substring(0,100);
-    let nomeP = req.query.nomeProfessor.substring(0,100);
-    let senhaP = bcrypt.hash(req.query.senhaProfessor.substring(0,100),salt);
-    let areaDCP = req.query.areaDoConhecimento.substring(0,100);
-    let cpfP = req.query.cpfProfessor.substring(0,100);
-    console.log(senhaP);
-    res.json(senhaP);
-    const isMatch = bcrypt.compareSync(req.query.senhaProfessor,senhaP);
-    if(!isMatch) return res.status(401).send('deu ruim pai');
     objProfessor = {
-        email: emailP,
-        nome: nomeP,
-        senha: senhaP,
-        area: areaDCP,
-        cpf: cpfP
+        email: req.body.emailProfessor,
+        nome: req.body.nomeProfessor,
+        area: req.body.areaDoConhecimento,
+        cpf: req.body.cpfProfessor,
+        id: req.body.id,
+        recurso: req.body.recurso,
+        geral: req.body.geral,
     }
-    cadastroDeProfessor(objProfessor,req,res);
+    updateProfessor(objProfessor,req,res);
 });
 
 
@@ -274,6 +301,14 @@ router.post('/insertRecursos',verifyADMRecursos,(req,res) =>{
     }
     console.log(objTipo);
     //inserirRecursos(objTipo,res);
+});
+
+
+
+router.delete('/deleteRecursos',(req,res) =>{
+    if(!req.body.nomeRecurso) return res.status(401).send('Informe o nome do Recurso!!!');
+    console.log("Deleta tipo de recursos");
+    deleteRecursos(req.body.nomeRecurso,req,res);
 });
 
 

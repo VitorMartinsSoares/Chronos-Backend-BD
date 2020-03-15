@@ -6,7 +6,7 @@ let selectP = function select(req,res){
     let query = `select tipoderecursos.idTipoDeRecursos,tipoderecursos.descricao, tipoderecursos.nome,
     tipoderecursos.idProfessor, professor.email,professor.nomeP 
     from afinal.tipoderecursos inner join afinal.professor on 
-    afinal.professor.idProfessor = afinal.tipoderecursos.idProfessor`;
+    afinal.professor.idProfessor = afinal.tipoderecursos.idProfessor where validadeTR=true`;
     sqlQUERY(query,obj,funcao,res);
 }
 //criando modulo
