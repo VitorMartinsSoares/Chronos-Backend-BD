@@ -1,19 +1,16 @@
 let sqlQUERY = require("./sqlQuerySemRes");
-let funcao = require("./imprimirResults")
+let funcao = require("./insertHorario");
 let objVazio;
+
 //adicionando tipo de recursos ao banco
-let selectDR = function select(results1, results2){
+let selectDR = function select(results1, results2,res){
     objVazio = results1;
-    console.log(results1);
-    console.log(results2);
     results2.forEach(function(name){
-        let query1 = "INSERT INTO afinal.datarecursos(iddata, idRecursos) VALUES ((SELECT iddata FROM afinal.data where afinal.data.data = '"+objVazio+"'), '"+name.idRecursos+"');";
+        objVazio = [[name.iddata,results1[0][0]]]
+        let query1 = "INSERT INTO afinal.datarecursos(iddata, idRecursos) VALUES ('"+name.iddata+"', (select idRecursos from recursos where numero = '"+objVazio[0][1]+"'));";
         sqlQUERY(query1,objVazio,funcao);
     });
-    results2.forEach(function(name){
-        let query2 = "INSERT INTO afinal.horario(`07:00-07:50`, `07:50-08:40`, `09:45-10:35`, `10:50-11:40`, `11:40-12:30`, `12:30-13:50`, `13:50-14:40`, `15:50-16:40`, `16:40-17:30`, `17:30-19:00`, `19:00-19:50`, `19:50-20:40`, `20:55-21:45`, `21:45-22:35`, `iddata`, `idRecursos`) VALUES ('1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', (SELECT iddata FROM afinal.data where afinal.data.data = '"+objVazio+"'), '"+name.idRecursos+"');"
-        sqlQUERY(query2,objVazio,funcao);
-    });
+    res.status(200).send("CERTO");
 }
 //criando modulo
 module.exports = selectDR;

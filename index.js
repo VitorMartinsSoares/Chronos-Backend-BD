@@ -55,6 +55,7 @@ let updateAprovadoProfessorHorario = require("./src/updateAprovadoProfessorHorar
 let updateRecusadoProfessorHorario = require("./src/updateRecusadoProfessorHorario");
 let updateTipoDeRecursos = require("./src/updateTipoDeRecursos");
 let updateProfessor = require("./src/updateProfessor");
+let updateRecursos = require("./src/updateRecursos");
 let deleteProfessorHorarioEspec = require("./src/deleteProfessorHorarioEspec");
 let deleteProfessor = require("./src/deleteProfessor");
 let deleteTipoDeRecursos = require("./src/deleteTipoDeRecursos");
@@ -118,6 +119,15 @@ router.delete('/deleteTipoDeRecursos',(req,res) =>{
     console.log("Deleta tipo de recursos");
     deleteTipoDeRecursos(req.body.nomeTipo,req,res);
 });
+
+
+
+router.delete('/deleteRecursos',(req,res) =>{
+    if(!req.body.nomeRecurso) return res.status(401).send('Informe o nome do Recurso!!!');
+    console.log("Deleta tipo de recursos");
+    deleteRecursos(req.body.nomeRecurso,req,res);
+});
+
 
 
 
@@ -233,6 +243,19 @@ router.put('/cadastroDeProfessor',(req,res) =>{
 
 
 
+router.put('/updateRecursos',(req,res) =>{
+    let objRecurso ={
+        recurso: req.body.recurso,
+        capacidade: req.body.capacidade,
+        informacao: req.body.informacao,
+        tipo: req.body.tipoDeRecursos,
+        id: req.body.idRecursos
+    }
+    updateRecursos(objRecurso,req,res);
+});
+
+
+
 router.get('/selectTabelaProfessor',(req,res) =>{
     console.log("Selecionando tabela de professor");
     selectTabelaProfessor(req,res);
@@ -289,26 +312,18 @@ router.put('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
 
 
 //cadastro de tipo de recursos
-router.post('/insertRecursos',verifyADMRecursos,(req,res) =>{
-    if(!req.body.recursos) return res.status(401).send('Informe o Email!');
-    if(!req.body.tipoRecurso) return res.status(401).send('Confirme o Email!');
-    let recursos = req.query.recursos.substring(0,100);
-    let tipoRecurso = req.query.tipoRecurso.substring(0,100);
+router.post('/insertRecursos',(req,res) =>{
+    if(!req.body.recursos) return res.status(401).send('Informe o nome!');
+    if(!req.body.tipoRecurso) return res.status(401).send('Confirme o tipo de recursos!');
+    let recursos = req.body.recursos.substring(0,100);
+    let tipoRecurso = req.body.tipoRecurso.substring(0,100);
     console.log("Inserindo Recursos");
     objTipo = {
         recursos: recursos,
         tipoRecurso: tipoRecurso
     }
     console.log(objTipo);
-    //inserirRecursos(objTipo,res);
-});
-
-
-
-router.delete('/deleteRecursos',(req,res) =>{
-    if(!req.body.nomeRecurso) return res.status(401).send('Informe o nome do Recurso!!!');
-    console.log("Deleta tipo de recursos");
-    deleteRecursos(req.body.nomeRecurso,req,res);
+    inserirRecursos(objTipo,res);
 });
 
 
