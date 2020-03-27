@@ -19,7 +19,7 @@ let selectD = function select(objVazio,req,res){
         if(results.length!=0){    
             if(results[0].email==null){
                 console.log("Dar update professor");
-                let query = `UPDATE afinal.professor SET email = '${objVazio.email}', nomeP = '${objVazio.nome}', senha = '${objVazio.nome}', areaDoConhecimento = '${objVazio.area}', admGeral = '0', admRecursos = '0' WHERE (cpf = '${objVazio.cpf}')`
+                let query = `UPDATE afinal.professor SET email = '${objVazio.email}', nomeP = '${objVazio.nome}', senha = '${objVazio.senha}', areaDoConhecimento = '${objVazio.area}', admGeral = '0', admRecursos = '0' WHERE (cpf = '${objVazio.cpf}')`
                 sqlQUERY(query,obj,funcao,res);
                 console.log(query)
             }else{

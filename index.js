@@ -3,11 +3,11 @@ var http = require('http');
 const express = require('express');
 const app = express();         
 const bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser'); 
-const bcrypt = require('bcrypt');
+var cookieParser = require('cookie-parser');     
+var bcrypt = require ('bcrypt-nodejs');
+var salt = bcrypt.genSaltSync(10);
 var jwt = require('jsonwebtoken');
 const fs   = require('fs');
-const secret = "meu-segredo";//esse segredo do JWT seria uma config
 const port = 3000;
 const cors = require('cors');
 const router = express.Router();
@@ -60,8 +60,6 @@ let deleteProfessorHorarioEspec = require("./src/deleteProfessorHorarioEspec");
 let deleteProfessor = require("./src/deleteProfessor");
 let deleteTipoDeRecursos = require("./src/deleteTipoDeRecursos");
 let deleteRecursos = require("./src/deleteRecursos");
-let validacao = require("./auth");
-
 
 
 //Login do usuario usando o token
@@ -70,7 +68,7 @@ router.post('/login',(req,res)=>{
     if(!req.body.email || !req.body.password){
         res.status(400).send('Informe usuário e senha!');
     }else{
-       selectProfessor(validacao,req,res);
+       selectProfessor(signin,req,res);
     }
 });
 
@@ -114,18 +112,17 @@ router.get('/tipoDeRecursos', (req, res) =>{
 
 
 
-router.delete('/deleteTipoDeRecursos',(req,res) =>{
-    if(!req.body.nomeTipo) return res.status(401).send('Informe o nome do Tipo!!');
+router.delete('/deleteTipoDeRecursos/:id',(req,res) =>{
     console.log("Deleta tipo de recursos");
-    deleteTipoDeRecursos(req.body.nomeTipo,req,res);
+    deleteTipoDeRecursos(req.params.id,res);
 });
 
 
 
-router.delete('/deleteRecursos',(req,res) =>{
+router.delete('/deleteRecursos/:id',(req,res) =>{
     if(!req.body.nomeRecurso) return res.status(401).send('Informe o nome do Recurso!!!');
     console.log("Deleta tipo de recursos");
-    deleteRecursos(req.body.nomeRecurso,req,res);
+    deleteRecursos(req.body.nomeRecurso,res);
 });
 
 
@@ -133,18 +130,14 @@ router.delete('/deleteRecursos',(req,res) =>{
 
 //inserir Um Pedido de Horario Pra uma Determinada Pessoa 
 router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
-    professor = req.body.payload;
-    data = req.body.data;
-    recurso = req.body.recurso;
-    motivo = req.body.texto;
-    horario = req.body.horario;
     objHorarioProf = {
-        professor: professor.id,
-        data: data,
-        recurso: recurso,
-        motivo: motivo
+        professor: req.body.payload.id,
+        data: req.body.data,
+        recurso: req.body.horario,
+        motivo: req.body.texto
     };
-    insertProfessorHorario(objHorarioProf,horario,res);
+    console.log(objHorarioProf);
+    insertProfessorHorario(objHorarioProf,res);
 });
 
 
@@ -203,43 +196,43 @@ router.post('/updateRecusadoProfessorHorario',verifyADMRecursos,(req,res) =>{
 
 
 //Cadastro de Professor
-router.post('/cadastroDeProfessor',(req,res) =>{
-    if(!req.body.emailProfessor) return res.status(401).send('Informe o Email!');
-    if(!req.body.emailConfirma) return res.status(401).send('Confirme o Email!');
-    if(!req.body.nomeProfessor) return res.status(401).send('Informe o seu Nome!');
-    if(!req.body.senhaProfessor) return res.status(401).send('Informe a senha!');
-    if(!req.body.senhaConfirma) return res.status(401).send('Informe a senha!');
+router.post('/inserirProfessor',(req,res) =>{
+    console.log(req.body);
+    if(!req.body.email) return res.status(401).send('Informe o Email!');
+    if(!req.body.confirmEmail) return res.status(401).send('Confirme o Email!');
+    if(!req.body.nome) return res.status(401).send('Informe o seu Nome!');
+    if(!req.body.password) return res.status(401).send('Informe a senha!');
+    if(!req.body.confirmPassword) return res.status(401).send('Informe a senha!');
     if(!req.body.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
-    if(!req.body.cpfProfessor) return res.status(401).send('Informe o cpf do Professor!');
-    if(req.body.emailProfessor!=req.body.emailConfirma) return res.status(401).send('Confirma o Email, Emails não batem!');
-    if(req.body.senhaProfessor!=req.body.senhaConfirma) return res.status(401).send('Confirma a Senha, Senhas não batem!');
-
+    if(!req.body.cpf) return res.status(401).send('Informe o cpf do Professor!');
+    if(req.body.email!=req.body.confirmEmail) return res.status(401).send('Confirma o Email, Emails não batem!');
+    if(req.body.password!=req.body.confirmPassword) return res.status(401).send('Confirma a Senha, Senhas não batem!');
     objProfessor = {
-        email: req.body.emailProfessor,
-        nome: req.body.nomeProfessor,
-        senha: req.body.senhaProfessor,
+        email: req.body.email,
+        nome: req.body.nome,
+        senha: bcrypt.hashSync(req.body.password, salt),
         area: req.body.areaDoConhecimento,
-        cpf: req.body.cpfProfessor
+        cpf: req.body.cpf
     }
     insertProfessor(objProfessor,req,res);
 });
 
-router.put('/cadastroDeProfessor',(req,res) =>{
-    if(!req.query.emailProfessor) return res.status(401).send('Informe o Email!');
-    if(!req.query.nomeProfessor) return res.status(401).send('Informe o seu Nome!');
-    if(!req.query.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
-    if(!req.query.cpfProfessor) return res.status(401).send('Informe o cpf do Professor!');
-    objProfessor = {
-        email: req.body.emailProfessor,
-        nome: req.body.nomeProfessor,
-        area: req.body.areaDoConhecimento,
-        cpf: req.body.cpfProfessor,
-        id: req.body.id,
-        recurso: req.body.recurso,
-        geral: req.body.geral,
-    }
-    updateProfessor(objProfessor,req,res);
-});
+// router.put('/cadastroDeProfessor',(req,res) =>{
+//     if(!req.query.emailProfessor) return res.status(401).send('Informe o Email!');
+//     if(!req.query.nomeProfessor) return res.status(401).send('Informe o seu Nome!');
+//     if(!req.query.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
+//     if(!req.query.cpfProfessor) return res.status(401).send('Informe o cpf do Professor!');
+//     objProfessor = {
+//         email: req.body.emailProfessor,
+//         nome: req.body.nomeProfessor,
+//         area: req.body.areaDoConhecimento,
+//         cpf: req.body.cpfProfessor,
+//         id: req.body.id,
+//         recurso: req.body.recurso,
+//         geral: req.body.geral,
+//     }
+//     updateProfessor(objProfessor,req,res);
+// });
 
 
 
@@ -281,31 +274,24 @@ router.get('/selectTabelaTipoDeRecursos',(req,res) =>{
 
 //cadastro de tipo de recursos
 router.post('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
-    if(!req.body.recType) return res.status(401).send('Confirme o nome do tipo!');
-    let nomeTipo = req.body.recType;
-    let rec = req.body.payload;
-    console.log("Inserindo Tipo de recursos");
-    objTipo = {
-        nomeTipo: nomeTipo.nome,
-        emailProfessor: 'vitor@'
-    }
-    console.log(objTipo);
+
+    console.log(objTipo)
     inserirTipoDeRecursos(objTipo,res);
 });
 
 
 
 router.put('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
-    if(!req.body.recType) return res.status(401).send('Confirme o nome do tipo!');
-    let nomeTipo = req.body.recType;
-    //let idTipo = req.body.idTipoDeRecursos;
-    console.log(nomeTipo);
-    console.log("Inserindo Tipo de recursos");
+    if(!req.body.recType.nome) return res.status(401).send('Confirme o nome do tipo!');
+    if(!req.body.recType.descricao) return res.status(401).send('Confirme a descricao do tipo!');
+    if(!req.body.recType.idProfessor) return res.status(401).send('Confirme o professor do tipo!');
     objTipo = {
-        nome: nomeTipo.nome,
-        id: nomeTipo.idTipoDeRecursos
+        nome: req.body.recType.nome,
+        descricao: req.body.recType.descricao,
+        professor: req.body.recType.idProfessor,
+        id: req.body.recType.idTipoDeRecursos
     }
-    console.log(objTipo);
+    console.log(req.body);
     updateTipoDeRecursos(objTipo,res);
 });
 
@@ -396,6 +382,30 @@ function verifyADMGeral(req, res, next){
 }
 
 
-
 var server = http.createServer(app); 
 server.listen(port);
+
+
+
+const signin = function (objeto,req,res){
+    console.log(objeto[0]);
+    if(!objeto[0]) return  res.status(400).send('Usuário não Encontrado!');
+    const isMatch = bcrypt.compareSync(req.body.password, objeto[0].senha);
+    if(!isMatch) return res.status(400).send('Email/Senha Inválidas!');
+    const payload = {
+        id: objeto[0].idProfessor,
+        email: objeto[0].email,
+        nome: objeto[0].nomeP,
+        areaDoConhecimento: objeto[0].areaDoConhecimento,
+        cpf: objeto[0].cpf,
+        admGeral: objeto[0].admGeral,
+        admRecursos: objeto[0].admRecursos
+    }
+    let idP = objeto[0].idProfessor
+    var privateKey = fs.readFileSync('./private.key', 'utf8');
+    var token = jwt.sign(payload, privateKey, { 
+        expiresIn: 3600, // 5min 
+        algorithm:  "RS256" //SHA-256 hash signature
+    }); 
+    res.status(200).send({ auth: true, token: token,payload: payload}); 
+}

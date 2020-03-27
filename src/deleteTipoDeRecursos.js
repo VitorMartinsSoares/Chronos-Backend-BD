@@ -4,8 +4,8 @@ let funcao = require("./imprimirResults")
 let selectD = function select(objVazio,res){
     let obj = [[0]];
     console.log("deletar recursos");
-    let query = `UPDATE afinal.tipoderecursos SET validadeTR = '0'  WHERE nome = '${objVazio}';`;
-    console.log(objVazio);
+    let query = `UPDATE afinal.tipoderecursos SET validadeTR = '0'  WHERE idTipoDeRecursos = '${objVazio}';`;
+    console.log(query);
     sqlQUERY(query,obj,funcao,res);
 }
 //criando modulo
