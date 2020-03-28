@@ -4,10 +4,9 @@ let funcao = require("./insertRecursosData")
 let selectD = function select(objVazio,res){
     let obj = [[objVazio.recursos]]
     console.log("insert recurso e selecao de data");
-    let query = `INSERT INTO afinal.recursos (numero, idTipoDeRecursos,validadeR) VALUES ('${objVazio.recursos}', 
-    (SELECT idTipoDeRecursos FROM afinal.tipoderecursos where tipoderecursos.nome ='${objVazio.tipoRecurso}'),'1');`;
-
+    let query = `INSERT INTO afinal.recursos(numero,capacidade,informacao,idTipoDeRecursos,validadeR) VALUES ('${objVazio.recursos}', '${objVazio.capacidade}', '${objVazio.inf}', '${objVazio.tipoRecurso}', '1');`;
     let queryCont = 'SELECT * FROM afinal.data;'
+    console.log(query)
     sqlQUERY(query,queryCont,obj,funcao,res);
 }
 //criando modulo

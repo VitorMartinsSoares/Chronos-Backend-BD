@@ -120,9 +120,8 @@ router.delete('/deleteTipoDeRecursos/:id',(req,res) =>{
 
 
 router.delete('/deleteRecursos/:id',(req,res) =>{
-    if(!req.body.nomeRecurso) return res.status(401).send('Informe o nome do Recurso!!!');
     console.log("Deleta tipo de recursos");
-    deleteRecursos(req.body.nomeRecurso,res);
+    deleteRecursos(req.params.id,res);
 });
 
 
@@ -198,15 +197,15 @@ router.post('/updateRecusadoProfessorHorario',verifyADMRecursos,(req,res) =>{
 //Cadastro de Professor
 router.post('/inserirProfessor',(req,res) =>{
     console.log(req.body);
-    if(!req.body.email) return res.status(401).send('Informe o Email!');
-    if(!req.body.confirmEmail) return res.status(401).send('Confirme o Email!');
-    if(!req.body.nome) return res.status(401).send('Informe o seu Nome!');
-    if(!req.body.password) return res.status(401).send('Informe a senha!');
-    if(!req.body.confirmPassword) return res.status(401).send('Informe a senha!');
-    if(!req.body.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
-    if(!req.body.cpf) return res.status(401).send('Informe o cpf do Professor!');
-    if(req.body.email!=req.body.confirmEmail) return res.status(401).send('Confirma o Email, Emails não batem!');
-    if(req.body.password!=req.body.confirmPassword) return res.status(401).send('Confirma a Senha, Senhas não batem!');
+    if(!req.body.email) return res.status(400).send('Informe o Email!');
+    if(!req.body.confirmEmail) return res.status(400).send('Confirme o Email!');
+    if(!req.body.nome) return res.status(400).send('Informe o seu Nome!');
+    if(!req.body.password) return res.status(400).send('Informe a senha!');
+    if(!req.body.confirmPassword) return res.status(400).send('Informe a senha!');
+    if(!req.body.areaDoConhecimento) return res.status(400).send('Informe a area do conhecimento!');
+    if(!req.body.cpf) return res.status(400).send('Informe o cpf do Professor!');
+    if(req.body.email!=req.body.confirmEmail) return res.status(400).send('Confirma o Email, Emails não batem!');
+    if(req.body.password!=req.body.confirmPassword) return res.status(400).send('Confirma a Senha, Senhas não batem!');
     objProfessor = {
         email: req.body.email,
         nome: req.body.nome,
@@ -217,55 +216,42 @@ router.post('/inserirProfessor',(req,res) =>{
     insertProfessor(objProfessor,req,res);
 });
 
-// router.put('/cadastroDeProfessor',(req,res) =>{
-//     if(!req.query.emailProfessor) return res.status(401).send('Informe o Email!');
-//     if(!req.query.nomeProfessor) return res.status(401).send('Informe o seu Nome!');
-//     if(!req.query.areaDoConhecimento) return res.status(401).send('Informe a area do conhecimento!');
-//     if(!req.query.cpfProfessor) return res.status(401).send('Informe o cpf do Professor!');
-//     objProfessor = {
-//         email: req.body.emailProfessor,
-//         nome: req.body.nomeProfessor,
-//         area: req.body.areaDoConhecimento,
-//         cpf: req.body.cpfProfessor,
-//         id: req.body.id,
-//         recurso: req.body.recurso,
-//         geral: req.body.geral,
-//     }
-//     updateProfessor(objProfessor,req,res);
-// });
-
-
-
-router.put('/updateRecursos',(req,res) =>{
-    let objRecurso ={
-        recurso: req.body.recurso,
-        capacidade: req.body.capacidade,
-        informacao: req.body.informacao,
-        tipo: req.body.tipoDeRecursos,
-        id: req.body.idRecursos
+router.put('/cadastroDeProfessor',(req,res) =>{
+    console.log(req.body)
+    if(!req.body.email) return res.status(400).send('Informe o Email!');
+    if(!req.body.nomeP) return res.status(400).send('Informe o seu Nome!');
+    if(!req.body.areaDoConhecimento) return res.status(400).send('Informe a area do conhecimento!');
+    if(!req.body.cpf) return res.status(400).send('Informe o cpf do Professor!');
+    objProfessor = {
+        email: req.body.email,
+        nome: req.body.nomeP,
+        area: req.body.areaDoConhecimento,
+        cpf: req.body.cpf,
+        id: req.body.idProfessor,
+        recurso: req.body.admRecursos,
+        geral: req.body.admGeral,
     }
-    updateRecursos(objRecurso,req,res);
+    updateProfessor(objProfessor,req,res);
 });
 
 
 
-router.get('/selectTabelaProfessor',(req,res) =>{
+router.get('/selectTabelaProfessor',verifyJWT,(req,res) =>{
     console.log("Selecionando tabela de professor");
     selectTabelaProfessor(req,res);
 });
 
 
 
-router.delete('/deleteProfessor',(req,res) =>{
-    if(!req.body.email) return res.status(401).send('Informe o Email!!');
-    let emailDel = req.body.email;
+router.delete('/deleteProfessor/:id',verifyJWT,(req,res) =>{
+    console.log(req.params.id);
     console.log("Deleta professor");
-    deleteProfessor(emailDel,req,res);
+    deleteProfessor(req.params.id,req,res);
 });
 
 
 
-router.get('/selectTabelaTipoDeRecursos',(req,res) =>{
+router.get('/selectTabelaTipoDeRecursos',verifyJWT,(req,res) =>{
     console.log("Selecionando tabela de professor");
     selectTabelaTipoDeRecursos(req,res);
 });
@@ -273,7 +259,7 @@ router.get('/selectTabelaTipoDeRecursos',(req,res) =>{
 
 
 //cadastro de tipo de recursos
-router.post('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
+router.post('/insertTipoDeRecursos',verifyJWT,(req,res) =>{
 
     console.log(objTipo)
     inserirTipoDeRecursos(objTipo,res);
@@ -281,10 +267,10 @@ router.post('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
 
 
 
-router.put('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
-    if(!req.body.recType.nome) return res.status(401).send('Confirme o nome do tipo!');
-    if(!req.body.recType.descricao) return res.status(401).send('Confirme a descricao do tipo!');
-    if(!req.body.recType.idProfessor) return res.status(401).send('Confirme o professor do tipo!');
+router.put('/insertTipoDeRecursos',verifyJWT,(req,res) =>{
+    if(!req.body.recType.nome) return res.status(400).send('Confirme o nome do tipo!');
+    if(!req.body.recType.descricao) return res.status(400).send('Confirme a descricao do tipo!');
+    if(!req.body.recType.idProfessor) return res.status(400).send('Confirme o professor do tipo!');
     objTipo = {
         nome: req.body.recType.nome,
         descricao: req.body.recType.descricao,
@@ -299,22 +285,46 @@ router.put('/insertTipoDeRecursos',verifyADMRecursos,(req,res) =>{
 
 //cadastro de tipo de recursos
 router.post('/insertRecursos',(req,res) =>{
-    if(!req.body.recursos) return res.status(401).send('Informe o nome!');
-    if(!req.body.tipoRecurso) return res.status(401).send('Confirme o tipo de recursos!');
-    let recursos = req.body.recursos.substring(0,100);
-    let tipoRecurso = req.body.tipoRecurso.substring(0,100);
+    console.log(req.body)
+    if(!req.body.recursos.numero) return res.status(400).send('Informe o nome do recurso!');
+    if(!req.body.recursos.informacao) return res.status(400).send('Informe a informacao do recurso!');
+    if(!req.body.recursos.idTipoDeRecursos) return res.status(400).send('Informe o tipo!');
+    if(!req.body.recursos.capacidade) return res.status(400).send('informe a capacidade do recurso!');
     console.log("Inserindo Recursos");
     objTipo = {
-        recursos: recursos,
-        tipoRecurso: tipoRecurso
+        recursos: req.body.recursos.numero,
+        inf: req.body.recursos.informacao,
+        tipoRecurso: req.body.recursos.idTipoDeRecursos,
+        capacidade: req.body.recursos.capacidade
     }
-    console.log(objTipo);
+    console.log(objTipo)
     inserirRecursos(objTipo,res);
 });
 
 
 
-router.get('/selectTabelaRecursos',(req,res) =>{
+router.put('/insertRecursos',(req,res) =>{
+    console.log(req.body)
+    if(!req.body.recursos.numero) return res.status(400).send('Informe o nome do recurso!');
+    if(!req.body.recursos.informacao) return res.status(400).send('Informe a informacao do recurso!');
+    if(!req.body.recursos.tipo) return res.status(400).send('Informe o tipo!');
+    if(!req.body.recursos.capacidade) return res.status(400).send('informe a capacidade do recurso!');
+    console.log("Inserindo Recursos");
+    objTipo = {
+        id: req.body.recursos.idRecursos,
+        recursos: req.body.recursos.numero,
+        inf: req.body.recursos.informacao,
+        tipoRecurso: req.body.recursos.idTipoDeRecursos,
+        capacidade: req.body.recursos.capacidade
+    }
+    console.log(objTipo)
+    console.log("AAAAAAAAAAAAAA TO COM DEPRESSO")
+    updateRecursos(objTipo,req,res);
+});
+
+
+
+router.get('/selectTabelaRecursos',verifyJWT,(req,res) =>{
     console.log("Selecionando tabela de recursos");
     selectTabelaRecursos(req,res);
 });
@@ -344,7 +354,7 @@ function verifyJWT(req, res, next){
     var publicKey  = fs.readFileSync('./public.key', 'utf8');
     jwt.verify(token, publicKey, {algorithm: ["RS256"]}, function(err, decoded) { 
         if (err)
-            return res.status(500).send({ auth: false, message: 'Token inválido.' });         
+            return res.status(401).send({ auth: false, message: 'Token inválido.' });         
         next(); 
     });
 }
@@ -360,7 +370,7 @@ function verifyADMRecursos(req, res, next){
     var publicKey  = fs.readFileSync('./public.key', 'utf8');
     jwt.verify(token, publicKey, {algorithm: ["RS256"]}, function(err, decoded) { 
         if (err) 
-            return res.status(500).send({ auth: false, message: 'Token inválido.' }); 
+            return res.status(401).send({ auth: false, message: 'Token inválido.' }); 
         next(); 
     }); 
 }
@@ -376,7 +386,7 @@ function verifyADMGeral(req, res, next){
     var publicKey  = fs.readFileSync('./public.key', 'utf8');
     jwt.verify(token, publicKey, {algorithm: ["RS256"]}, function(err, decoded) { 
         if (err) 
-            return res.status(500).send({ auth: false, message: 'Token inválido.' }); 
+            return res.status(401).send({ auth: false, message: 'Token inválido.' }); 
         next(); 
     }); 
 }

@@ -18,9 +18,9 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
 let funcao = require("./imprimirResults");
 const mysql = require('mysql');
 //adicionando tipo de recursos ao banco
-let selectP = function select(email,req,res){
+let selectP = function select(id,req,res){
     let obj = [[0]];
-    let query = `DELETE FROM afinal.professor WHERE (email = '${email}');`;
+    let query = `DELETE FROM afinal.professor WHERE (idProfessor = '${id}');`;
     sqlQUERY(query,obj,funcao,res);
 }
 //criando modulo
