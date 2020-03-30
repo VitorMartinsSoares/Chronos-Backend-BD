@@ -4,7 +4,6 @@ let objVazio;
 //adicionando tipo de recursos ao banco
 let selectDR = function select(results1, results2,res){
     let cont=0;
-    let contador = results2.lenght-1;
     results2.forEach(function(name){
         objVazio = [[results1,name.idRecursos]];
         let query = "INSERT INTO afinal.datarecursos(iddata, idRecursos) VALUES ((SELECT iddata FROM afinal.data where afinal.data.data = '"+results1+"'), '"+name.idRecursos+"');";

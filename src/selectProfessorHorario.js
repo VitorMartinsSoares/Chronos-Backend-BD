@@ -1,4 +1,5 @@
-let sqlQUERY = require("./sqlQueryExec");
+let sqlQUERY = require("./sqlQuerySemRes");
+let agrup = require("./agrupamentoDeHorarios");
 let funcao = require("./imprimirResults");
 //adicionando tipo de recursos ao banco
 let selectPRC = function select(objVazio, res){
@@ -12,7 +13,7 @@ let selectPRC = function select(objVazio, res){
     INNER JOIN afinal.tipoderecursos on afinal.tipoderecursos.idTipoDeRecursos = afinal.recursos.idTipoDeRecursos
     WHERE afinal.professorhorario.status = 0 and afinal.tipoderecursos.idProfessor = ${objVazio.id}
     order by professorhorario.idProfessor, professorhorario.idhorario, professorhorario.horario;`;
-    sqlQUERY(query,obj,funcao,res);
+    sqlQUERY(query,obj,agrup,res);
     console.log("Mostrando os professores e os horarios em pedidos")
 }
 //criando modulo
