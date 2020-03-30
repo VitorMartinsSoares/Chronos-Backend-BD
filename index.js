@@ -21,6 +21,7 @@ console.log("api iniciada");
 
 
 
+
 //variaveis destacadas 
 let dataReq;
 let tipoRecursosReq;
@@ -60,11 +61,12 @@ let deleteProfessorHorarioEspec = require("./src/deleteProfessorHorarioEspec");
 let deleteProfessor = require("./src/deleteProfessor");
 let deleteTipoDeRecursos = require("./src/deleteTipoDeRecursos");
 let deleteRecursos = require("./src/deleteRecursos");
+let historico = require("./src/historico");
+let desfazer = require("./src/desfazer");
 
 
 //Login do usuario usando o token
 router.post('/login',(req,res)=>{
-    console.log("email: ",req.body.email, " senha: " ,req.body.password)
     if(!req.body.email || !req.body.password){
         res.status(400).send('Informe usuário e senha!');
     }else{
@@ -75,8 +77,7 @@ router.post('/login',(req,res)=>{
 
 
 //rota de logout
-app.post('/logout',verifyJWT, function(req, res) { 
-    console.log("Fez logout e cancelou o token!");
+app.post('/logout',verifyJWT, function(req, res) {
     res.status(200).send({ auth: false, token: null }); 
 });
 
@@ -87,7 +88,6 @@ router.post('/data',(req, res) =>{
     if(!req.body.data) return res.status(400).send('Informe a Data!!!');
     if(!req.body.tipoRecurso) return res.status(400).send('Informe a Data!!!');
     objData[0][0] = req.body.data;
-    console.log("Caso não tenha a data "+ objData[0][0]+" Inserir no banco de dados");
     selectData(objData,res);
 });
 
@@ -98,7 +98,6 @@ router.get('/dataRecursos', (req, res) =>{
     dataReq = req.query.data.substring(0,100);
     tipoRecursosReq = req.query.tipoRecurso.substring(0,100);
     objDataRecursos = [[dataReq,tipoRecursosReq]];
-    console.log("Criando tabela de Recursos e Datas");
     selectHorarioDataRecursos(objDataRecursos,res);
 });
 
@@ -106,21 +105,18 @@ router.get('/dataRecursos', (req, res) =>{
 
 //tipos de recursos para seleção
 router.get('/tipoDeRecursos', (req, res) =>{
-    console.log("Informando os Tipos de Recursos");
     selectTipoRecursos(objData,res);
 });
 
 
 
 router.delete('/deleteTipoDeRecursos/:id',(req,res) =>{
-    console.log("Deleta tipo de recursos");
     deleteTipoDeRecursos(req.params.id,res);
 });
 
 
 
 router.delete('/deleteRecursos/:id',(req,res) =>{
-    console.log("Deleta tipo de recursos");
     deleteRecursos(req.params.id,res);
 });
 
@@ -135,7 +131,6 @@ router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
         recurso: req.body.horario,
         motivo: req.body.texto
     };
-    console.log(objHorarioProf);
     insertProfessorHorario(objHorarioProf,res);
 });
 
@@ -143,9 +138,14 @@ router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
 
 //Verificar Pedidos de Horarios Para Seleção
 router.post('/selectProfessorHorario',verifyADMRecursos,(req,res)=>{
-    console.log(req.body.payload.id);
-    console.log("Mostrando os professores e os horarios em pedidos");
     selectProfessorHorario(req.body.payload,res);
+});
+
+
+
+//Verificar Pedidos de Horarios Para Seleção
+router.post('/historico',verifyADMRecursos,(req,res)=>{
+    historico(req.body.payload,res);
 });
 
 
@@ -153,8 +153,6 @@ router.post('/selectProfessorHorario',verifyADMRecursos,(req,res)=>{
 //Recurso para algum professor Identificar seus pedidos de horario
 router.post('/selectProfessorHorarioEspec',verifyJWT,(req,res)=>{
     professor = req.body.payload;
-    console.log(professor);
-    console.log("Mostrando os professores e os horarios em pedidos ESPECIFICO");
     selectProfessorHorarioEspec(professor.email,res);
 });
 
@@ -162,33 +160,43 @@ router.post('/selectProfessorHorarioEspec',verifyJWT,(req,res)=>{
 
 //Professor ADM de recursos aprovar uma requisição de horario
 router.post('/updateAprovadoProfessorHorario',verifyADMRecursos,(req,res) =>{
-    objVazio = req.body.item;
-    console.log(objVazio);
     objHorarioProf = {
-        professor: objVazio.email,
-        sala: objVazio.numero,
-        data: objVazio.data.slice(0,10),
-        horario: objVazio.horario
+        professor: req.body.item.email,
+        sala: req.body.item.numero,
+        data: req.body.item.data.slice(0,10),
+        horario: req.body.item.horario,
+        posicao: req.body.item.pos,
+        contador: req.body.item.cont
     }
-    console.log("Aprovando determinado horario para determinado professor");
-    console.log(objHorarioProf)
+    console.log(req.body)
     updateAprovadoProfessorHorario(objHorarioProf,res);
 });
 
 
+//Professor ADM de recursos desfazer uma aprovação ou recuso de horario
+router.post('/desfazer',verifyADMRecursos,(req,res) =>{
+    objHorarioProf = {
+        professor: req.body.item.email,
+        sala: req.body.item.numero,
+        data: req.body.item.data.slice(0,10),
+        horario: req.body.item.horario,
+        posicao: req.body.item.pos,
+        contador: req.body.item.cont
+    }
+    desfazer(objHorarioProf,res);
+});
+
 
 //Professor ADM de recursos recusar uma requisição de horario
 router.post('/updateRecusadoProfessorHorario',verifyADMRecursos,(req,res) =>{
-    objVazio = req.body.item;
-    console.log(objVazio);
     objHorarioProf = {
-        professor: objVazio.email,
-        sala: objVazio.numero,
-        data: objVazio.data.slice(0,10),
-        horario: objVazio.horario
+        professor: req.body.item.email,
+        sala: req.body.item.numero,
+        data: req.body.item.data.slice(0,10),
+        horario: req.body.item.horario,
+        posicao: req.body.item.pos,
+        contador: req.body.item.cont
     }
-    console.log("Recusando determinado horario para determinado professor");
-    console.log(objHorarioProf)
     updateRecusadoProfessorHorario(objHorarioProf,res);
 });
 
@@ -196,7 +204,6 @@ router.post('/updateRecusadoProfessorHorario',verifyADMRecursos,(req,res) =>{
 
 //Cadastro de Professor
 router.post('/inserirProfessor',(req,res) =>{
-    console.log(req.body);
     if(!req.body.email) return res.status(400).send('Informe o Email!');
     if(!req.body.confirmEmail) return res.status(400).send('Confirme o Email!');
     if(!req.body.nome) return res.status(400).send('Informe o seu Nome!');
@@ -217,7 +224,6 @@ router.post('/inserirProfessor',(req,res) =>{
 });
 
 router.put('/cadastroDeProfessor',(req,res) =>{
-    console.log(req.body)
     if(!req.body.email) return res.status(400).send('Informe o Email!');
     if(!req.body.nomeP) return res.status(400).send('Informe o seu Nome!');
     if(!req.body.areaDoConhecimento) return res.status(400).send('Informe a area do conhecimento!');
@@ -237,22 +243,18 @@ router.put('/cadastroDeProfessor',(req,res) =>{
 
 
 router.get('/selectTabelaProfessor',verifyJWT,(req,res) =>{
-    console.log("Selecionando tabela de professor");
     selectTabelaProfessor(req,res);
 });
 
 
 
 router.delete('/deleteProfessor/:id',verifyJWT,(req,res) =>{
-    console.log(req.params.id);
-    console.log("Deleta professor");
     deleteProfessor(req.params.id,req,res);
 });
 
 
 
 router.get('/selectTabelaTipoDeRecursos',verifyJWT,(req,res) =>{
-    console.log("Selecionando tabela de professor");
     selectTabelaTipoDeRecursos(req,res);
 });
 
@@ -260,8 +262,14 @@ router.get('/selectTabelaTipoDeRecursos',verifyJWT,(req,res) =>{
 
 //cadastro de tipo de recursos
 router.post('/insertTipoDeRecursos',verifyJWT,(req,res) =>{
-
-    console.log(objTipo)
+    if(!req.body.recType.nome) return res.status(400).send('Confirme o nome do tipo!');
+    if(!req.body.recType.descricao) return res.status(400).send('Confirme a descricao do tipo!');
+    if(!req.body.recType.idProfessor) return res.status(400).send('Confirme o professor do tipo!');
+    objTipo = {
+        nome: req.body.recType.nome,
+        descricao: req.body.recType.descricao,
+        professor: req.body.recType.idProfessor,
+    }
     inserirTipoDeRecursos(objTipo,res);
 });
 
@@ -277,7 +285,6 @@ router.put('/insertTipoDeRecursos',verifyJWT,(req,res) =>{
         professor: req.body.recType.idProfessor,
         id: req.body.recType.idTipoDeRecursos
     }
-    console.log(req.body);
     updateTipoDeRecursos(objTipo,res);
 });
 
@@ -285,19 +292,16 @@ router.put('/insertTipoDeRecursos',verifyJWT,(req,res) =>{
 
 //cadastro de tipo de recursos
 router.post('/insertRecursos',(req,res) =>{
-    console.log(req.body)
     if(!req.body.recursos.numero) return res.status(400).send('Informe o nome do recurso!');
     if(!req.body.recursos.informacao) return res.status(400).send('Informe a informacao do recurso!');
     if(!req.body.recursos.idTipoDeRecursos) return res.status(400).send('Informe o tipo!');
     if(!req.body.recursos.capacidade) return res.status(400).send('informe a capacidade do recurso!');
-    console.log("Inserindo Recursos");
     objTipo = {
         recursos: req.body.recursos.numero,
         inf: req.body.recursos.informacao,
         tipoRecurso: req.body.recursos.idTipoDeRecursos,
         capacidade: req.body.recursos.capacidade
     }
-    console.log(objTipo)
     inserirRecursos(objTipo,res);
 });
 
@@ -309,7 +313,6 @@ router.put('/insertRecursos',(req,res) =>{
     if(!req.body.recursos.informacao) return res.status(400).send('Informe a informacao do recurso!');
     if(!req.body.recursos.tipo) return res.status(400).send('Informe o tipo!');
     if(!req.body.recursos.capacidade) return res.status(400).send('informe a capacidade do recurso!');
-    console.log("Inserindo Recursos");
     objTipo = {
         id: req.body.recursos.idRecursos,
         recursos: req.body.recursos.numero,
@@ -317,15 +320,12 @@ router.put('/insertRecursos',(req,res) =>{
         tipoRecurso: req.body.recursos.idTipoDeRecursos,
         capacidade: req.body.recursos.capacidade
     }
-    console.log(objTipo)
-    console.log("AAAAAAAAAAAAAA TO COM DEPRESSO")
     updateRecursos(objTipo,req,res);
 });
 
 
 
 router.get('/selectTabelaRecursos',verifyJWT,(req,res) =>{
-    console.log("Selecionando tabela de recursos");
     selectTabelaRecursos(req,res);
 });
 
@@ -340,7 +340,6 @@ router.post('/deleteProfessorHorarioEspec',verifyJWT,(req,res) =>{
         professor: item.email,
         horario: item.horario 
     }
-    console.log("Deletando horario do professor especifico");
     deleteProfessorHorarioEspec(dHPE,res);
 });
 
@@ -398,7 +397,6 @@ server.listen(port);
 
 
 const signin = function (objeto,req,res){
-    console.log(objeto[0]);
     if(!objeto[0]) return  res.status(400).send('Usuário não Encontrado!');
     const isMatch = bcrypt.compareSync(req.body.password, objeto[0].senha);
     if(!isMatch) return res.status(400).send('Email/Senha Inválidas!');

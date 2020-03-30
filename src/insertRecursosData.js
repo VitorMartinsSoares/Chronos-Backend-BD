@@ -10,6 +10,7 @@ let selectDR = function select(results1, results2,res){
         let query1 = "INSERT INTO afinal.datarecursos(iddata, idRecursos) VALUES ('"+name.iddata+"', (select idRecursos from recursos where numero = '"+objVazio[0][1]+"'));";
         sqlQUERY(query1,objVazio,funcao);
     });
+    res.status(200).send("OK");
 }
 //criando modulo
 module.exports = selectDR;
