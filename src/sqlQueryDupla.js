@@ -10,10 +10,9 @@ let sqlQUERY = function execSQLQuery(sqlQry,sqlQry2,valor,funcao,res=0){
     });
     connection.query(sqlQry,function(error, results1, fields){
         if(error) 
-            console.log(error)
+            res.status(400).send("Recurso já Existente")
         else
             console.log(results1)
-        console.log("INSERT")
         resul1 = results1;
     });
     connection.query(sqlQry2,function(error, results2, fields){

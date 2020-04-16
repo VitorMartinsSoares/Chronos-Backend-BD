@@ -23,4 +23,3 @@ let selectD = function select(objVazio,res){
 //criando modulo
 module.exports = selectD;
 //'2', '1', '1', '1', '07:50:00
-

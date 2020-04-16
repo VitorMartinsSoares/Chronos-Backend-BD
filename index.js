@@ -122,7 +122,6 @@ router.delete('/deleteRecursos/:id',(req,res) =>{
 
 
 
-
 //inserir Um Pedido de Horario Pra uma Determinada Pessoa 
 router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
     objHorarioProf = {
@@ -308,7 +307,6 @@ router.post('/insertRecursos',(req,res) =>{
 
 
 router.put('/insertRecursos',(req,res) =>{
-    console.log(req.body)
     if(!req.body.recursos.numero) return res.status(400).send('Informe o nome do recurso!');
     if(!req.body.recursos.informacao) return res.status(400).send('Informe a informacao do recurso!');
     if(!req.body.recursos.tipo) return res.status(400).send('Informe o tipo!');

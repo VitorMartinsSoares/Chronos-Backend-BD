@@ -3,6 +3,7 @@ let funcao = require("./imprimirResults");
 const mysql = require('mysql');
 //adicionando tipo de recursos ao banco
 let selectD = function select(objVazio,req,res){
+    let mensagem = "Email já Cadastrado!!!";
     let obj = [[0]];
     let sqlQry = `select email from professor where cpf = '${objVazio.cpf}';`
     const connection = mysql.createConnection({
@@ -18,10 +19,8 @@ let selectD = function select(objVazio,req,res){
             console.log(results)
         if(results.length!=0){    
             if(results[0].email==null){
-                console.log("Dar update professor");
                 let query = `UPDATE afinal.professor SET email = '${objVazio.email}', nomeP = '${objVazio.nome}', senha = '${objVazio.senha}', areaDoConhecimento = '${objVazio.area}', admGeral = '0', admRecursos = '0' WHERE (cpf = '${objVazio.cpf}')`
-                sqlQUERY(query,obj,funcao,res);
-                console.log(query)
+                sqlQUERY(query,obj,funcao,res,mensagem);
             }else{
                 res.status(400).send('Este CPF está em uso, caso não tenha se cadastrado entre em contato com a administracao do site !');
             }

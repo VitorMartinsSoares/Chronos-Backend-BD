@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
+let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res,mensagem="ERRO"){
     const connection = mysql.createConnection({
         host     : 'localhost',
         port     : 3306,
@@ -8,7 +8,7 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res){
     });
     connection.query(sqlQry,[values],function(error, results, fields){
         if(error) 
-            res.json(error);
+            res.status(400).send(mensagem);
         else
             res.json(results);
         funcao(results);
