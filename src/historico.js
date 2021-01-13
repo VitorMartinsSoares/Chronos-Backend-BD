@@ -13,7 +13,6 @@ let selectPRC = function select(objVazio, res){
     WHERE afinal.professorhorario.status != 0 and afinal.tipoderecursos.idProfessor = ${objVazio.id}
     order by professorhorario.idProfessor, professorhorario.idhorario, professorhorario.horario;`;
     sqlQUERY(query,obj,agrup,res);
-    console.log("Mostrando os professores e os horarios em pedidos")
 }
 //criando modulo
 module.exports = selectPRC;

@@ -11,10 +11,9 @@ let selectPRC = function select(objVazio, res){
     INNER JOIN afinal.data on afinal.data.iddata = afinal.datarecursos.iddata
     INNER JOIN afinal.recursos on afinal.recursos.idRecursos = afinal.datarecursos.idRecursos
     INNER JOIN afinal.tipoderecursos on afinal.tipoderecursos.idTipoDeRecursos = afinal.recursos.idTipoDeRecursos
-    WHERE afinal.professorhorario.status = 0 and afinal.tipoderecursos.idProfessor = ${objVazio.id}
+    WHERE afinal.professorhorario.status = 0 and afinal.tipoderecursos.idProfessor = ${objVazio.id} and afinal.data.data > now()
     order by professorhorario.idProfessor, professorhorario.idhorario, professorhorario.horario;`;
     sqlQUERY(query,obj,agrup,res);
-    console.log("Mostrando os professores e os horarios em pedidos")
 }
 //criando modulo
 module.exports = selectPRC;

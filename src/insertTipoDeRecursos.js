@@ -4,7 +4,6 @@ let funcao = require("./imprimirResults")
 let inserirTP = function select(objVazio, res){
     let obj = [[0]];
     let query = `INSERT INTO afinal.tipoderecursos (descricao,nome,idProfessor,validadeTR) VALUES ('${objVazio.descricao}','${objVazio.nome}','${objVazio.professor}','1');`;
-    console.log(query)
     sqlQUERY(query,obj,funcao,res);
 }
 //criando modulo

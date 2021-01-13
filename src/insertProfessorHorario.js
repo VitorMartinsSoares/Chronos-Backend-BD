@@ -10,30 +10,10 @@ let valor;
 //adicionando tipo de recursos ao banco
 let selectD = function select(objVazio,res){
     let obj = [[0]];
-    // let sqlQry = `SELECT * FROM professorhorario WHERE idProfessor = '${objVazio.professor}' AND 
-    // idHorario = (SELECT idhorario from afinal.horario where iddata = (select iddata from data where data='${objVazio.data}') and idRecursos = (select idRecursos from recursos where numero = '${objVazio.recurso[0].recurso}'));`
-    // const connection = mysql.createConnection({
-    //     host     : 'localhost',
-    //     port     : 3306,
-    //     user     : 'root',
-    //     database : 'afinal' 
-    // });
-    // connection.query(sqlQry,function(error, results, fields){
-    //     if(error) 
-    //         console.log(error)
-    //     else
-    //         console.log(results)
-    //     if(results.length==0){
-            
-    //     }
 
-
-    // });
     for(i=0;i<objVazio.recurso.length;i++){
         hor = objVazio.recurso[i].horario.slice(0,5) + ":00";
         valor = parseInt(objVazio.recurso[i].valor) +1;
-
-        console.log(valor);
         query = `INSERT INTO afinal.professorhorario (idProfessor, idHorario, horario, motivo ,status) VALUES ('${objVazio.professor}', 
         (SELECT idhorario from afinal.horario where iddata = (select iddata from data where data='${objVazio.data}') and idRecursos = (select idRecursos from recursos where numero = '${objVazio.recurso[i].recurso}')), 
         '${hor}','${objVazio.motivo}', 0 );`

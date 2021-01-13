@@ -11,6 +11,7 @@ const fs   = require('fs');
 const port = 3000;
 const cors = require('cors');
 const router = express.Router();
+const jwtdecode = require('jwt-decode');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,6 +20,18 @@ app.use('/', router);
 console.log("api iniciada");
 //todas bibliotecas e inicialização da api
 
+const multer = require("multer");
+const XLSX = require("xlsx");
+var storage = multer.memoryStorage();
+var upload = multer({ //multer settings
+  storage: storage
+});
+function validate(req, res, next) {
+    if (!req.file) {
+      return res.status(400).send('Insira um arquivo');
+    }
+    next();
+  }
 
 
 
@@ -63,6 +76,7 @@ let deleteTipoDeRecursos = require("./src/deleteTipoDeRecursos");
 let deleteRecursos = require("./src/deleteRecursos");
 let historico = require("./src/historico");
 let desfazer = require("./src/desfazer");
+let allProf = require("./src/upload");
 
 
 //Login do usuario usando o token
@@ -124,8 +138,9 @@ router.delete('/deleteRecursos/:id',(req,res) =>{
 
 //inserir Um Pedido de Horario Pra uma Determinada Pessoa 
 router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
+    var token = req.headers['x-access-token']; 
     objHorarioProf = {
-        professor: req.body.payload.id,
+        professor: jwtdecode.default(token).id,
         data: req.body.data,
         recurso: req.body.horario,
         motivo: req.body.texto
@@ -137,22 +152,25 @@ router.post('/insertProfessorHorario',verifyJWT,(req,res) =>{
 
 //Verificar Pedidos de Horarios Para Seleção
 router.post('/selectProfessorHorario',verifyADMRecursos,(req,res)=>{
-    selectProfessorHorario(req.body.payload,res);
+    var token = req.headers['x-access-token'];
+    selectProfessorHorario(jwtdecode.default(token),res);
 });
 
 
 
 //Verificar Pedidos de Horarios Para Seleção
 router.post('/historico',verifyADMRecursos,(req,res)=>{
-    historico(req.body.payload,res);
+    var token = req.headers['x-access-token']; 
+    historico(jwtdecode.default(token),res);
 });
 
 
 
 //Recurso para algum professor Identificar seus pedidos de horario
 router.post('/selectProfessorHorarioEspec',verifyJWT,(req,res)=>{
-    professor = req.body.payload;
-    selectProfessorHorarioEspec(professor.email,res);
+    var token = req.headers['x-access-token']; 
+    console.log(jwtdecode.default(token).email)
+    selectProfessorHorarioEspec(jwtdecode.default(token).email,res);
 });
 
 
@@ -180,7 +198,8 @@ router.post('/desfazer',verifyADMRecursos,(req,res) =>{
         data: req.body.item.data.slice(0,10),
         horario: req.body.item.horario,
         posicao: req.body.item.pos,
-        contador: req.body.item.cont
+        contador: req.body.item.cont,
+        status: req.body.item.status
     }
     desfazer(objHorarioProf,res);
 });
@@ -217,8 +236,10 @@ router.post('/inserirProfessor',(req,res) =>{
         nome: req.body.nome,
         senha: bcrypt.hashSync(req.body.password, salt),
         area: req.body.areaDoConhecimento,
-        cpf: req.body.cpf
+        cpf: req.body.cpf,
+        matricula: req.body.matricula
     }
+    console.log(req.body)
     insertProfessor(objProfessor,req,res);
 });
 
@@ -309,7 +330,7 @@ router.post('/insertRecursos',(req,res) =>{
 router.put('/insertRecursos',(req,res) =>{
     if(!req.body.recursos.numero) return res.status(400).send('Informe o nome do recurso!');
     if(!req.body.recursos.informacao) return res.status(400).send('Informe a informacao do recurso!');
-    if(!req.body.recursos.tipo) return res.status(400).send('Informe o tipo!');
+    if(!req.body.recursos.idTipoDeRecursos) return res.status(400).send('Informe o tipo!');
     if(!req.body.recursos.capacidade) return res.status(400).send('informe a capacidade do recurso!');
     objTipo = {
         id: req.body.recursos.idRecursos,
@@ -329,6 +350,7 @@ router.get('/selectTabelaRecursos',verifyJWT,(req,res) =>{
 
 
 
+
 //cancelar reserva
 router.post('/deleteProfessorHorarioEspec',verifyJWT,(req,res) =>{
     let item = req.body.item;
@@ -336,12 +358,36 @@ router.post('/deleteProfessorHorarioEspec',verifyJWT,(req,res) =>{
         data : item.data.slice(0,10),
         recursos: item.numero,
         professor: item.email,
-        horario: item.horario 
+        horario: item.horario,
+        status: item.status
     }
+    console.log(req.body);
     deleteProfessorHorarioEspec(dHPE,res);
 });
 
 
+app.post('/upload', upload.single('file'), validate, function (req, res) {
+    const fileLocation = req.file.buffer;
+    var workbook = XLSX.read(fileLocation);
+    var sheet_name_list = workbook.SheetNames;
+    let profObj ={
+        cpf: 0,
+        nome: ''
+    }
+    const fields = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]).filter((e) => {
+      if (Object.keys(e).length == 11) {
+        return e
+      }
+    });
+    objprofObj = [];
+    fields.forEach((e) => {
+        objprofObj.push({
+            cpf:  e[Object.keys(e)[0]],
+            nome: e[Object.keys(e)[1]]});
+    });
+    allProf(objprofObj,req,res);
+    return res.status(200).send('Arquivo enviado com sucesso');
+});
 
 //função que verifica se o JWT é validado atravez do token
 function verifyJWT(req, res, next){
@@ -361,9 +407,10 @@ function verifyJWT(req, res, next){
 //função que verifica se o JWT é validado atravez do token e se é adm De Recursos
 function verifyADMRecursos(req, res, next){ 
     var token = req.headers['x-access-token'];
+    let tokendecoded = jwtdecode.default(token);
     if (!token) 
         return res.status(401).send({ auth: false, message: 'Token não informado.' }); 
-    if(!(req.body.payload.admRecursos == true)) return res.status(401).send({ auth: false, message: 'Apenas Administradores possuem acessos' }); 
+    if(!(tokendecoded.admRecursos == true)) return res.status(401).send({ auth: false, message: 'Apenas Administradores possuem acessos' }); 
     var publicKey  = fs.readFileSync('./public.key', 'utf8');
     jwt.verify(token, publicKey, {algorithm: ["RS256"]}, function(err, decoded) { 
         if (err) 

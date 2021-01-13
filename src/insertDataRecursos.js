@@ -11,7 +11,6 @@ let selectDR = function select(results1, results2,res){
         cont+=1;
     });
     res.status(200).send("CERTO");
-    console.log(cont);
 
 }
 //criando modulo

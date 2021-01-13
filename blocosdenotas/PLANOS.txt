@@ -1,7 +1,0 @@
-1- Informa os tipos de Recursos
-2- Recebe data e recursos
-3- Recebe usuario e senha(opcional)(VALIDAR, ADMIN ou PROFESSOR)
-4- Informa tabela DataHorarioRecursos
-5- Recebe horario proposto(validar se possivel)
-6- Enviar validação ao professor responsavel
-7- Modifica no banco de dados as alterações

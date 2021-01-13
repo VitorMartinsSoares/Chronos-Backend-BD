@@ -20,7 +20,6 @@ let sqlQUERY = function execSQLQuery(sqlQry,sqlQry2,valor,funcao,res=0){
             console.log(error)
         else
             console.log(results2)
-        console.log("SELECT")
         resul2 = results2;
         if(res==0){
             funcao(valor,resul2);

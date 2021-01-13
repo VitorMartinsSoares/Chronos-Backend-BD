@@ -12,7 +12,6 @@ let sqlQUERY = function execSQLQuery(sqlQry,[values],funcao,res,mensagem="ERRO")
         else
             res.json(results);
         funcao(results);
-        console.log("Mostrando os professores e os horarios em pedidos")
         connection.end();
     });
 }

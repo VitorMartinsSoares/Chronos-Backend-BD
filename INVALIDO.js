@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt-nodejs');
 var salt = bcrypt.genSaltSync(10);
 
 const signin = function (objeto,req,res){
-    console.log(objeto[0]);
     if(!objeto[0]) return  res.status(400).send('Usuário não Encontrado!');
     const isMatch = bcrypt.compareSync(req.query.password, user.password);
     //const isMatch = (req.body.password == objeto[0].senha);

@@ -14,6 +14,7 @@ module.exports = app =>{
             host     : 'localhost',
             port     : 3306,
             user     : 'root',
+            password: '1234',
             database : 'afinal' 
         });
         connection.query(sqlQry,[values],function(error, results, fields){
