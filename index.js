@@ -256,6 +256,7 @@ router.put('/cadastroDeProfessor',(req,res) =>{
         id: req.body.idProfessor,
         recurso: req.body.admRecursos,
         geral: req.body.admGeral,
+        matricula: req.body.matricula
     }
     updateProfessor(objProfessor,req,res);
 });

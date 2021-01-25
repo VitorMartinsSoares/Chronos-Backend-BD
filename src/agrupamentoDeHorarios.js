@@ -98,7 +98,7 @@ let agrupamento = function(results, values, res) {
         fund[j].cont = cont;
         res.json(fund);
     }else{
-        res.status(200).send("OK")
+        res.json(results);
     }
 };
 module.exports = agrupamento;
