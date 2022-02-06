@@ -1,3 +1,205 @@
+
+
+
+
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema afinal
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema afinal
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `afinal` DEFAULT CHARACTER SET utf8 ;
+USE `afinal` ;
+
+-- -----------------------------------------------------
+-- Table `afinal`.`data`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`data` (
+  `iddata` INT NOT NULL AUTO_INCREMENT,
+  `data` DATE NULL DEFAULT NULL,
+  PRIMARY KEY (`iddata`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 19
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `afinal`.`professor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`professor` (
+  `idProfessor` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(100) NULL DEFAULT NULL,
+  `nomeP` VARCHAR(100) NULL DEFAULT NULL,
+  `senha` VARCHAR(75) NULL DEFAULT NULL,
+  `areaDoConhecimento` VARCHAR(45) NULL DEFAULT NULL,
+  `admGeral` TINYINT NULL DEFAULT NULL,
+  `admRecursos` TINYINT NULL DEFAULT NULL,
+  `matricula` VARCHAR(11) NULL DEFAULT NULL,
+  `cpf` VARCHAR(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`idProfessor`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `cpf_UNIQUE` (`matricula` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 126
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `afinal`.`tipoderecursos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`tipoderecursos` (
+  `idTipoDeRecursos` INT NOT NULL AUTO_INCREMENT,
+  `descricao` MEDIUMTEXT NULL DEFAULT NULL,
+  `nome` VARCHAR(45) NULL DEFAULT NULL,
+  `quantidade` INT NULL DEFAULT NULL,
+  `idProfessor` INT NOT NULL,
+  `validadeTR` TINYINT NULL DEFAULT NULL,
+  PRIMARY KEY (`idTipoDeRecursos`, `idProfessor`),
+  UNIQUE INDEX `nome_UNIQUE` (`nome` ASC) VISIBLE,
+  INDEX `fk_tipoderecursos_professor1_idx` (`idProfessor` ASC) VISIBLE,
+  CONSTRAINT `fk_tipoderecursos_professor1`
+    FOREIGN KEY (`idProfessor`)
+    REFERENCES `afinal`.`professor` (`idProfessor`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `afinal`.`recursos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`recursos` (
+  `idRecursos` INT NOT NULL AUTO_INCREMENT,
+  `numero` VARCHAR(11) NULL DEFAULT NULL,
+  `capacidade` INT NULL DEFAULT NULL,
+  `informacao` VARCHAR(100) NULL DEFAULT NULL,
+  `idTipoDeRecursos` INT NOT NULL,
+  `validadeR` TINYINT NULL DEFAULT NULL,
+  PRIMARY KEY (`idRecursos`, `idTipoDeRecursos`),
+  UNIQUE INDEX `numero_UNIQUE` (`numero` ASC) VISIBLE,
+  INDEX `fk_recursos_tipoderecursos1_idx` (`idTipoDeRecursos` ASC) VISIBLE,
+  CONSTRAINT `fk_recursos_tipoderecursos1`
+    FOREIGN KEY (`idTipoDeRecursos`)
+    REFERENCES `afinal`.`tipoderecursos` (`idTipoDeRecursos`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `afinal`.`datarecursos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`datarecursos` (
+  `iddata` INT NOT NULL,
+  `idRecursos` INT NOT NULL,
+  PRIMARY KEY (`iddata`, `idRecursos`),
+  INDEX `fk_data_has_recursos_recursos1_idx` (`idRecursos` ASC) VISIBLE,
+  INDEX `fk_data_has_recursos_data1_idx` (`iddata` ASC) VISIBLE,
+  CONSTRAINT `fk_data_has_recursos_data1`
+    FOREIGN KEY (`iddata`)
+    REFERENCES `afinal`.`data` (`iddata`),
+  CONSTRAINT `fk_data_has_recursos_recursos1`
+    FOREIGN KEY (`idRecursos`)
+    REFERENCES `afinal`.`recursos` (`idRecursos`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `afinal`.`horario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`horario` (
+  `idhorario` INT NOT NULL AUTO_INCREMENT,
+  `07:00-07:50` INT NOT NULL,
+  `07:50-08:40` INT NOT NULL,
+  `08:55-09:45` INT NOT NULL,
+  `09:45-10:35` INT NOT NULL,
+  `10:50-11:40` INT NOT NULL,
+  `11:40-12:30` INT NOT NULL,
+  `12:30-13:50` INT NOT NULL,
+  `13:50-14:40` INT NOT NULL,
+  `14:40-15:30` INT NOT NULL,
+  `15:50-16:40` INT NOT NULL,
+  `16:40-17:30` INT NOT NULL,
+  `17:30-19:00` INT NOT NULL,
+  `19:00-19:50` INT NOT NULL,
+  `19:50-20:40` INT NOT NULL,
+  `20:55-21:45` INT NOT NULL,
+  `21:45-22:35` INT NOT NULL,
+  `iddata` INT NOT NULL,
+  `idRecursos` INT NOT NULL,
+  PRIMARY KEY (`idhorario`, `iddata`, `idRecursos`),
+  INDEX `fk_horario_datarecursos1_idx` (`iddata` ASC, `idRecursos` ASC) VISIBLE,
+  CONSTRAINT `fk_horario_datarecursos1`
+    FOREIGN KEY (`iddata` , `idRecursos`)
+    REFERENCES `afinal`.`datarecursos` (`iddata` , `idRecursos`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 48
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `afinal`.`professorhorario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `afinal`.`professorhorario` (
+  `idProfessor` INT NOT NULL,
+  `idhorario` INT NOT NULL,
+  `horario` TIME NOT NULL,
+  `status` TINYINT NULL DEFAULT NULL,
+  `motivo` VARCHAR(500) NULL DEFAULT NULL,
+  `primeiro` TINYINT NULL DEFAULT NULL,
+  `quantidade` INT NULL DEFAULT NULL,
+  `fim` TIME NULL DEFAULT NULL,
+  PRIMARY KEY (`idhorario`, `horario`, `idProfessor`),
+  INDEX `fk_professor_has_horario_horario1_idx` (`idhorario` ASC) VISIBLE,
+  INDEX `fk_professor_has_horario_professor1_idx` (`idProfessor` ASC) VISIBLE,
+  CONSTRAINT `fk_professor_has_horario_horario1`
+    FOREIGN KEY (`idhorario`)
+    REFERENCES `afinal`.`horario` (`idhorario`),
+  CONSTRAINT `fk_professor_has_horario_professor1`
+    FOREIGN KEY (`idProfessor`)
+    REFERENCES `afinal`.`professor` (`idProfessor`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 INSERT INTO mydb.professor (email, nome, senha, areaDoConhecimento, responsavel) VALUES ('vitor231408@gmail.com', 'Vitor Martins Soares', '@Aa11121314', 'Matematica', '1');
 INSERT INTO mydb.horario (horarioInicio, horarioFim) VALUES ('2019-09-18 12:43:30', '2019-09-18 14:43:30');
 INSERT INTO mydb.tipoderecursos (descricao, nome, quantidade) VALUES ('laboratorios para experiencia do aluno', 'Laboratorio', '20');
@@ -5,16 +207,12 @@ INSERT INTO mydb.recursos (numero, capacidade, informacao, TipoDeRecursos_idTipo
 INSERT INTO mydb.recursos_has_horario (Recursos_idRecursos, Horario_idHorario, ocupacao) VALUES ('1', '1', 'true');
 INSERT INTO mydb.professor_has_recursos_has_horario (Professor_idProfessor, Recursos_has_Horario_Recursos_idRecursos, Recursos_has_Horario_Horario_idHorario, status) VALUES ('1', '1', '1', 'ocupado');
 
-
-
 UPDATE mydb.professor SET email = 'vitormartinssoare@live.com', nome = 'Lucas Martins', senha = '123',   = 'a', responsavel = '0' WHERE (idProfessor = '1');
 UPDATE mydb.horario SET horarioInicio = '2019-09-18 14:43:30', horarioFim = '2019-09-18 12:43:30' WHERE (idHorario = '1');
 UPDATE mydb.tipoderecursos SET descricao = 'salario', nome = 'sala', quantidade = '40' WHERE (idTipoDeRecursos = '1');
 UPDATE mydb.recursos SET numero = '0', capacidade = '0', informacao = '0', TipoDeRecursos_idTipoDeRecursos = '0', Professor_idProfessor = '0' WHERE (idRecursos = '1');
 UPDATE mydb.recursos_has_horario SET Recursos_idRecursos = '1', Horario_idHorario = '1', ocupacao = 'false' WHERE (Recursos_idRecursos = '1') and (Horario_idHorario = '1');
 UPDATE mydb.professor_has_recursos_has_horario SET status = 'liberado' WHERE (Professor_idProfessor = '1') and (Recursos_has_Horario_Recursos_idRecursos = '1') and (Recursos_has_Horario_Horario_idHorario = '1');
-
-
 
 DELETE FROM mydb.professor_has_recursos_has_horario WHERE (Professor_idProfessor = '1') and (Recursos_has_Horario_Recursos_idRecursos = '1') and (Recursos_has_Horario_Horario_idHorario = '1');
 ALTER TABLE mydb.professor_has_recursos_has_horario AUTO_INCREMENT = 1;
@@ -29,25 +227,12 @@ ALTER TABLE mydb.horario AUTO_INCREMENT = 1;
 DELETE FROM mydb.tipoderecursos WHERE (idTipoDeRecursos = '1');
 ALTER TABLE mydb.tipoderecursos AUTO_INCREMENT = 1;
 
-
-
 SELECT * FROM mydb.professor;
 SELECT * FROM mydb.horario;
 SELECT * FROM mydb.tipoderecursos;
 SELECT * FROM mydb.recursos;
 SELECT * FROM mydb.recursos_has_horario;
 SELECT * FROM mydb.professor_has_recursos_has_horario;
-
-
-
-
-
-
-
- 
-
-
-
 
 SELECT bancoteste.recursos.numero, bancoteste.recursos.idTipoDeRecursos, bancoteste.recursos.idRecursos, bancoteste.data.iddata, bancoteste.horario.* 
 FROM bancoteste.datarecursos        
@@ -56,17 +241,11 @@ INNER JOIN bancoteste.recursos ON bancoteste.recursos.idRecursos = bancoteste.da
   INNER JOIN bancoteste.data ON bancoteste.data.iddata = bancoteste.datarecursos.iddata   
   WHERE bancoteste.recursos.idTipoDeRecursos = 1 and bancoteste.data.iddata = (SELECT bancoteste.data.iddata from bancoteste.data where bancoteste.data.data = '2020/02/12') ;
 
-
 DELETE FROM `afinal`.`professorhorario` WHERE 
 (`idhorario` = (SELECT idhorario FROM afinal.horario 
-        where iddata=(SELECT iddata FROM afinal.data where data = '2020-02-16') 
-        and idRecursos=(SELECT idRecursos FROM afinal.recursos where numero = '611')))
- and (`horario` = '07:50:00') and (`idProfessor` = '2');
-
-
-
-
-
+where iddata=(SELECT iddata FROM afinal.data where data = '2020-02-16') 
+and idRecursos=(SELECT idRecursos FROM afinal.recursos where numero = '611')))
+and (`horario` = '07:50:00') and (`idProfessor` = '2');
 
 ALTER TABLE afinal.professor AUTO_INCREMENT = 1;
 INSERT INTO `afinal`.`professor` (`email`, `nome`, `senha`, `areaDoConhecimento`, `responsavel`, `cpf`) VALUES ('123', '123', '123', '123', '1', '123');
@@ -90,9 +269,6 @@ INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDe
 INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('606', '20', 'dsa', '2');
 INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('607', '20', 'dsa', '2');
 INSERT INTO `afinal`.`recursos` (`numero`, `capacidade`, `informacao`, `idTipoDeRecursos`) VALUES ('610', '20', 'dsa', '2');
-
-
-
 
 INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('00:00:00', '01:00:00');
 INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('01:00:00', '02:00:00');
@@ -119,12 +295,6 @@ INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('21:00:0
 INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('22:00:00', '23:00:00');
 INSERT INTO `banco`.`horario` (`horarioInicio`, `horarioFinal`) VALUES ('23:00:00', '00:00:00');
 
-
-
-
-
- INNER JOIN bancofinal.recursos ON bancofinal.recursos.idRecursos = bancofinal.horariorecursos.idRecursos
-
+INNER JOIN bancofinal.recursos ON bancofinal.recursos.idRecursos = bancofinal.horariorecursos.idRecursos
 
 SELECT afinal.horario.* ,  afinal.datarecursos.* ,afinal.data.* , afinal.recursos.*  FROM afinal.horario INNER JOIN afinal.datarecursos ON afinal.datarecursos.iddata = afinal.horario.iddata and afinal.datarecursos.idRecursos = afinal.horario.idRecursos  INNER JOIN afinal.recursos ON afinal.recursos.idRecursos = afinal.datarecursos.idRecursos  INNER JOIN afinal.data ON afinal.data.iddata WHERE afinal.recursos.idTipoDeRecursos = 1 and afinal.data.iddata = (SELECT afinal.data.iddata from afinal.data where afinal.data.data = '2020/02/14') ;
-
